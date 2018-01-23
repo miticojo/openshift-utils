@@ -1,0 +1,32 @@
+# steps defined in pre-upgrade OCP stage: 
+# https://docs.openshift.com/container-platform/3.7/install_config/upgrading/automated_upgrades.html#preparing-for-an-automated-upgrade
+
+- hosts: nodes
+  become: yes
+  
+  vars:
+     current_ocp_ver: ''
+     next_ocp_ver: ''
+
+  tasks:
+  - name: check current version
+    shell: "yum repolist -C | grep ose | cut -d '-' -f5"
+    register: current_ocp_ver
+    when: current_ocp_ver == ''
+    
+  - name: define next minor version (ex 3.x+1)
+    set_fact: 
+      next_ocp_ver: "{{current_ocp_ver.stdout.split('.').0}}.{{(current_ocp_ver.stdout.split('.').1|int) + 1 }}"
+    when: next_ocp_ver == ''
+
+  - name: enable repos for upgrade
+    command: subscription-manager repos --disable="rhel-7-server-ose-{{current_ocp_ver.stdout}}-rpms" \
+      --enable="rhel-7-server-ose-{{next_ocp_ver}}-rpms" \
+      --enable="rhel-7-server-extras-rpms" \
+      --enable="rhel-7-fast-datapath-rpms"
+    
+  - name: upgrade latest version of atomic-openshift-utils
+    yum: 
+      name: atomic-openshift-utils
+      update_cache: yes
+      state: latest
