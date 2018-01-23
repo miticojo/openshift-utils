@@ -1,4 +1,6 @@
 # Openshift Node OS Rolling Update
+# Note: restart node only if really needed
+
 - hosts: nodes
   serial: "20%"
   
