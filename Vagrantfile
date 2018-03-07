@@ -97,8 +97,8 @@ Vagrant.configure("2") do |config|
              "ocp_rhn_user": RHN_USER,
              "ocp_rhn_pass": RHN_PASS,
              "ocp_rhn_pool_ids": RHN_POOL_ID,
-             "domain": OCP_DOMAIN,
-             "public_domain": OCP_PUBLIC_DOMAIN,
+             "ocp_internal_domain": OCP_DOMAIN,
+             "ocp_public_domain": OCP_PUBLIC_DOMAIN,
              "ocp_version": OCP_VERSION
            }
            if USE_LOCAL_REPO
