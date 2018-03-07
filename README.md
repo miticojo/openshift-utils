@@ -20,11 +20,11 @@ Tested with Vagrant 2.x and provider libvirt/virtualbox/vmware_fusion
 
 ### Run your lab
 Adjust following variables into Vagrantfile
-’’’
+
 OCP_MASTER_HOSTS = 1
 OCP_NODES_HOSTS = 4
 OCP_VERSION = 3.6
-’’’
+
 then call ‘vagrant up’
 
 **NOTE:** 
