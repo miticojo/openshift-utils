@@ -1,0 +1,6 @@
+BOOTPROTO=dhcp
+DEVICE={{item}}
+HWADDR={{hostvars[inventory_hostname]["ansible_" + item].macaddress}}
+ONBOOT=yes
+TYPE=Ethernet
+USERCTL=no

@@ -1,0 +1,24 @@
+# Workaround to setup interface address on cloud
+- name: NETWORK | Create interface config file if doesn't exists
+  template:
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{item}}
+    src: etc/ifcfg-template.j2
+  when:
+  - ansible_interfaces > 2
+  - hostvars[inventory_hostname]['ansible_' + item].type == 'ether'
+  - hostvars[inventory_hostname]['ansible_' + item].active == true
+  - not 'ipv4' in hostvars[inventory_hostname]['ansible_' + item]
+  with_items: "{{ansible_interfaces}}"
+  register: reconfigure_iface
+  tags: ocp_iface
+
+- name: NETWORK | Restart NetworkManager
+  service: name=NetworkManager state=restarted
+  when: reconfigure_iface|changed
+  tags: ocp_iface
+
+- setup:
+  when: reconfigure_iface|changed
+  tags: ocp_iface
+
+- meta: flush_handlers

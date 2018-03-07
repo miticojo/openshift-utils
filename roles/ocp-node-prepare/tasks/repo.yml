@@ -1,0 +1,64 @@
+- block:
+  - name: REPOS | Enable RHEL subscription via username/password
+    command: "subscription-manager register --username='{{ ocp_rhn_user }}' --password='{{ ocp_rhn_pass }}' --insecure"
+    register: subscription_manager_register
+    failed_when: >
+      subscription_manager_register.rc != 0 and ("already" not in subscription_manager_register.stderr)
+    changed_when: >
+      subscription_manager_register.rc != 64 and ("already" not in subscription_manager_register.stderr)
+    until: subscription_manager_register.rc == 0 or "already" in subscription_manager_register.stderr
+    retries: 5
+    delay: 10
+
+  - name: REPOS | Add subs by pool id if your version of Ansible has a buggy redhat_subscription module
+    command: "subscription-manager subscribe --pool={{ item }}"
+    with_items: "{{ ocp_rhn_pool_ids | default([])}}"
+    register: subscription_manager
+    failed_when: >
+      subscription_manager.rc != 0 and ("already" not in subscription_manager.stdout)
+    changed_when: >
+      subscription_manager.rc != 5 and ("already" not in subscription_manager.stdout)
+    until: subscription_manager.rc == 0
+    retries: 5
+    delay: 10
+
+  - name: REPOS | Enable only required yum/rhn distros
+    command: |
+      subscription-manager repos --disable "*" \
+        --enable rhel-{{ ansible_distribution_major_version }}-server-rpms \
+        --enable rhel-{{ ansible_distribution_major_version }}-server-extras-rpms \
+        --enable rhel-{{ ansible_distribution_major_version }}-server-ose-{{ocp_version}}-rpms \
+        --enable rhel-{{ ansible_distribution_major_version }}-fast-datapath-rpms
+
+  when:
+  - ocp_rhn_user != '' and ocp_rhn_pass != ''
+  - not ocp_local_package_repository
+  tags: rhn, repos
+
+- name: REPOS | add local repository
+  yum_repository:
+    name: "{{item}}"
+    description: "{{item}} repo"
+    file: local_repos
+    baseurl: "{{ocp_local_package_repository_url}}/{{item}}"
+    gpgcheck: no
+  with_items:
+  - rhel-{{ ansible_distribution_major_version }}-server-rpms
+  - rhel-{{ ansible_distribution_major_version }}-server-extras-rpms
+  - rhel-{{ ansible_distribution_major_version }}-server-ose-{{ocp_version}}-rpms
+  - rhel-{{ ansible_distribution_major_version }}-fast-datapath-rpms
+  when: ocp_local_package_repository
+  tags: repos
+
+- name: REPOS | clean local cache
+  command: yum clean all
+  register: yum_clean
+  failed_when: >
+    yum_clean.rc != 0 and ("This system is not registered" not in yum_clean.stdout)
+
+
+- name: REPOS | create local cache
+  command: yum makecache fast
+  register: yum_makecache
+  failed_when: >
+    yum_makecache.rc != 0 and ("This system is not registered" not in yum_makecache.stdout)

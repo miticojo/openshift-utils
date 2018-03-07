@@ -1,0 +1,34 @@
+- name: FACTS | SELinux is required for openshift 3.x
+  shell: "test $(getenforce) == 'Enforcing'"
+  changed_when: False
+  ignore_errors: yes
+
+- name: FACTS | Confirm DNS resolution for localhost
+  command: "ping -c1 localhost"
+  changed_when: False
+
+- name: FACTS | Confirm DNS resoultion for short domain name of this host
+  shell: "ping -c1 $(hostname -s)"
+  changed_when: False
+
+- name: FACTS | Confirm DNS resolution for fully-qualified domain name of this host
+  shell: "ping -c1 $(hostname -f)"
+  changed_when: False
+
+- name: FACTS | Define internal iface when multiple ifaces exist
+  set_fact: ose_internal_iface="{{item}}"
+  when:
+  - ansible_interfaces > 2
+  - hostvars[inventory_hostname]['ansible_' + item].type == 'ether'
+  - hostvars[inventory_hostname]['ansible_' + item].active == true
+  - hostvars[inventory_hostname]['ansible_' + item].ipv4.address != ansible_host
+  with_items: "{{ansible_interfaces}}"
+
+- name: FACTS | Define internal iface when single iface exists
+  set_fact: ose_internal_iface='item'
+  when:
+  - ose_internal_iface is undefined
+  - hostvars[inventory_hostname]['ansible_' + item].type == 'ether'
+  - hostvars[inventory_hostname]['ansible_' + item].active == true
+  - hostvars[inventory_hostname]['ansible_' + item].ipv4.address == ansible_host
+  with_items: "{{ansible_interfaces}}"

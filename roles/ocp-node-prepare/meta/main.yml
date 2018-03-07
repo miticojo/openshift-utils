@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Giorgio Crivellari
+  description: Install and manage a Galaxy (http://galaxyproject.org/) server.
+  company: The Galaxy Project
+  license: AFL v3.0
+  min_ansible_version: 1.8
+  platforms:
+  - name: EL
+    versions:
+    - 7
+  categories:
+  - cloud
+  - paas
+dependencies: []
+allow_duplicates: yes

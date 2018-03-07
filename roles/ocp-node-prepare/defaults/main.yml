@@ -1,0 +1,32 @@
+ocp_master_group: masters
+ocp_node_group: nodes
+ocp_etcd_group: etcd
+ocp_version: 3.6
+ocp_rhn_user: "{{ lookup('env','rh_user') | default('')}}"
+ocp_rhn_pass: "{{ lookup('env','rh_pass') | default('')}}"
+ocp_rhn_pool_ids: "{{ lookup('env','rh_pool') | default('')}}"
+ocp_internal_domain: ''
+ocp_public_domain: ''
+ocp_master_identity_providers: [{
+    'name': 'htpasswd_auth',
+    'login': 'true',
+    'challenge': 'true',
+    'kind': 'HTPasswdPasswordIdentityProvider',
+    'filename': '/etc/origin/master/htpasswd'
+  }]
+ocp_master_cluster_method: native
+ocp_master_cluster_hostname: "ocp.{{ocp_internal_domain}}"
+ocp_master_cluster_public_hostname: "ocp.{{ocp_public_domain}}"
+ocp_master_default_subdomain: "apps.{{ocp_public_domain}}"
+ocp_local_package_repository: no
+ocp_local_package_repository_url: ''
+ocp_update_machine: no
+ocp_dns_upstream:
+- 8.8.8.8
+- 8.8.4.4
+ocp_timezone: UTC
+ocp_ntp_upstream:
+- 0.rhel.pool.ntp.org
+- 1.rhel.pool.ntp.org
+- 2.rhel.pool.ntp.org
+- 3.rhel.pool.ntp.org

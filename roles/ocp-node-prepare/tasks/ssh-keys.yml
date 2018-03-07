@@ -1,0 +1,32 @@
+
+
+- name: SSH | Disable host_key_checking for OCP ansible deployment
+  lineinfile: regexp="#host_key_checking.*" line="host_key_checking = False" path=/etc/ansible/ansible.cfg
+  when: inventory_hostname == groups[ocp_master_group][0]
+
+- name: SSH | Create private/public ssh key for OCP ansible deployment
+  command: ssh-keygen -b 4096 -t rsa -f ~/.ssh/id_rsa -q -N ""
+  register: ssh_keygen
+  when: inventory_hostname == groups[ocp_master_group][0]
+  failed_when:
+  - ssh_keygen.rc != 0
+  - not "already exists" in ssh_keygen.stdout
+  changed_when:  ssh_keygen.rc == 0
+
+- name: SSH | Gather generated ssh public key
+  command: cat ~/.ssh/id_rsa.pub
+  register: ocp_ssh_pub
+  delegate_to: "{{groups[ocp_master_group][0]}}"
+
+- name: SSH | Save public ssh key
+  set_fact:
+    ocp_ssh_key: "{{ocp_ssh_pub.stdout}}"
+  when:
+    - ocp_ssh_pub is defined
+
+- name: SSH | Distribute ssh key on all hosts for user root
+  authorized_key:
+    user: root
+    state: present
+    key: "{{ocp_ssh_key}}"
+  when: ocp_ssh_key is defined

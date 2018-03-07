@@ -1,0 +1,65 @@
+# Create an OSEv3 group that contains the master, nodes, etcd, and lb groups.
+# The lb group lets Ansible configure HAProxy as the load balancing solution.
+# Comment lb out if your load balancer is pre-configured.
+[OSEv3:children]
+masters
+nodes
+etcd
+lb
+
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+ansible_ssh_user=root
+deployment_type=openshift-enterprise
+# check disabled for lab purpose (NON PRODUCTION)
+openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability
+# Uncomment the following to enable htpasswd authentication; defaults to
+# DenyAllPasswordIdentityProvider.
+openshift_master_identity_providers={{ocp_master_identity_providers}}
+
+# Native high availbility cluster method with optional load balancer.
+# If no lb group is defined installer assumes that a load balancer has
+# been preconfigured. For installation the value of
+# openshift_master_cluster_hostname must resolve to the load balancer
+# or to one or all of the masters defined in the inventory if no load
+# balancer is present.
+openshift_master_cluster_method={{ocp_master_cluster_method}}
+openshift_master_cluster_hostname={{ocp_master_cluster_hostname}}
+openshift_master_cluster_public_hostname={{ocp_master_cluster_public_hostname}}
+openshift_master_default_subdomain={{ocp_master_default_subdomain}}
+# override the default controller lease ttl
+#osm_controller_lease_ttl=30
+
+openshift_hosted_metrics_deploy=true
+openshift_hosted_logging_deploy=true
+
+openshift_router_selector='region=infra'
+openshift_registry_selector='region=infra'
+openshift_clock_enabled=true
+
+
+# host group for masters
+[masters]
+{% for host in groups["masters"] %}
+{{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }} openshift_schedulable=true
+{% endfor %}
+
+# host group for etcd
+[etcd]
+{% for host in groups["etcd"] %}
+{{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}
+{% endfor %}
+
+# Specify load balancer host
+[lb]
+{% if "lb" in groups %}
+{% for host in groups["lb"] %}
+{{hostvars[host].ansible_hostname}}
+{% endfor %}
+{% endif %}
+
+# host group for nodes, includes region info
+[nodes]
+{% for host in groups["nodes"] %}
+{{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }} openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+{% endfor %}

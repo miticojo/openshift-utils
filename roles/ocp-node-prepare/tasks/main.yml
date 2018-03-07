@@ -1,0 +1,29 @@
+- name: Check OCP pre-requisites
+  include_tasks: facts.yml
+  tags: always
+
+- name: Fix network interfaces
+  include_tasks: network.yml
+
+- name: Setup packages repositories
+  include_tasks: repo.yml
+
+- name: Prepare ntp
+  include_tasks: ntp.yml
+  tags: ntp
+
+- name: Prepare node
+  include_tasks: prepare.yml
+  tags: prepare
+
+- name: Prepare dns
+  include_tasks: dns.yml
+  tags: dns
+
+- name: Update node
+  include_tasks: update.yml
+  tags: update
+
+- name: SSH key distribution
+  include_tasks: ssh-keys.yml
+  tags: ssh

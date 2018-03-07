@@ -1,0 +1,7 @@
+- hosts: OSEv3
+  become: yes
+
+  tasks:
+  - name: run Openshift Node Preparation
+    import_role:
+      name: ocp-node-prepare
