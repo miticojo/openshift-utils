@@ -18,6 +18,8 @@ ocp_master_cluster_method: native
 ocp_master_cluster_hostname: "ocp.{{ocp_internal_domain}}"
 ocp_master_cluster_public_hostname: "ocp.{{ocp_public_domain}}"
 ocp_master_default_subdomain: "apps.{{ocp_public_domain}}"
+ocp_hosted_metrics_deploy: yes
+ocp_hosted_logging_deploy: false
 ocp_local_package_repository: no
 ocp_local_package_repository_url: ''
 ocp_update_machine: no

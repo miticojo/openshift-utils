@@ -30,8 +30,8 @@ openshift_master_default_subdomain={{ocp_master_default_subdomain}}
 # override the default controller lease ttl
 #osm_controller_lease_ttl=30
 
-openshift_hosted_metrics_deploy=true
-openshift_hosted_logging_deploy=true
+openshift_hosted_metrics_deploy={{ocp_hosted_metrics_deploy}}
+openshift_hosted_logging_deploy={{ocp_hosted_logging_deploy}}
 
 openshift_router_selector='region=infra'
 openshift_registry_selector='region=infra'
@@ -61,5 +61,8 @@ openshift_clock_enabled=true
 # host group for nodes, includes region info
 [nodes]
 {% for host in groups["nodes"] %}
-{{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }} openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+{{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}
+{%- if not host in groups["masters"] and loop.index == 1 %}
+ openshift_node_labels="{'region': 'infra', 'zone': 'east'}" {% else %} openshift_node_labels="{'region': 'primary', 'zone': 'east'}" 
+{% endif %}
 {% endfor %}

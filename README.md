@@ -24,8 +24,10 @@ Adjust following variables into Vagrantfile
 OCP_MASTER_HOSTS = 1
 OCP_NODES_HOSTS = 4
 OCP_VERSION = 3.6
+OCP_LOGGING = false
+OCP_METRICS = false
 ```
 then call `vagrant up`
 
-**NOTE:** 
-During box rising vagrant-registration plugin will register automatically your machine to RHN.
+**NOTE:**
+During box rising vagrant-registration plugin will register automatically your machines to RHN.

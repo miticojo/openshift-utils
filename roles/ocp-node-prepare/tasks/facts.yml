@@ -15,6 +15,16 @@
   shell: "ping -c1 $(hostname -f)"
   changed_when: False
 
+- name: FACTS | Check if variables are not empty
+  assert:
+    that:
+    - item != ''
+    msg: "{{item}} is empty"
+  with_items:
+  - ocp_internal_domain
+  - ocp_public_domain
+  - ocp_version
+
 - name: FACTS | Define internal iface when multiple ifaces exist
   set_fact: ose_internal_iface="{{item}}"
   when:

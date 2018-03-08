@@ -3,7 +3,7 @@
 
 OCP_MASTER_HOSTS = 1
 OCP_NODES_HOSTS = 4
-USE_LOCAL_REPO = false
+USE_LOCAL_REPO = true
 LOCAL_REPO_URL = "http://#{ENV['local_yum_repo']}:8000"
 RHN_USER = ENV['rh_user']
 RHN_PASS = ENV['rh_pass']
@@ -12,6 +12,8 @@ PRIVATE_NET = "192.168.33."
 OCP_VERSION = 3.6
 OCP_DOMAIN = 'example.loc'
 OCP_PUBLIC_DOMAIN = 'example.com'
+OCP_LOGGING = false
+OCP_METRICS = false
 
 # vagrant plugins to install
 plugins = ["vagrant-sshfs", "vagrant-registration"]
@@ -44,16 +46,16 @@ Vagrant.configure("2") do |config|
 
       node.vm.provider :vmware_fusion do |vb, override|
         vb.memory = "2048"
-        vb.cpus = 1
+        vb.cpus = 2
       end
 
       node.vm.provider :virtualbox do |vb, override|
         vb.memory = "2048"
-        vb.cpus = 1
+        vb.cpus = 2
       end
 
       node.vm.provider :libvirt do |vb, override|
-        vb.cpus = 1
+        vb.cpus = 2
         vb.memory = "2048"
       end
     end
@@ -99,7 +101,9 @@ Vagrant.configure("2") do |config|
              "ocp_rhn_pool_ids": RHN_POOL_ID,
              "ocp_internal_domain": OCP_DOMAIN,
              "ocp_public_domain": OCP_PUBLIC_DOMAIN,
-             "ocp_version": OCP_VERSION
+             "ocp_version": OCP_VERSION,
+             "ocp_hosted_metrics_deploy": OCP_METRICS,
+             "ocp_hosted_logging_deploy": OCP_LOGGING
            }
            if USE_LOCAL_REPO
              ansible.extra_vars["ocp_local_package_repository_url"] = LOCAL_REPO_URL
