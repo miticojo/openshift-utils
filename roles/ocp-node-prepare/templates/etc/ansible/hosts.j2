@@ -32,11 +32,20 @@ openshift_master_default_subdomain={{ocp_master_default_subdomain}}
 
 openshift_hosted_metrics_deploy={{ocp_hosted_metrics_deploy}}
 openshift_hosted_logging_deploy={{ocp_hosted_logging_deploy}}
+openshift_enable_service_catalog={{ocp_enable_service_catalog}}
 
 openshift_router_selector='region=infra'
 openshift_registry_selector='region=infra'
 openshift_clock_enabled=true
+# apply updated node defaults
+openshift_node_kubelet_args={'pods-per-core': ['10'], 'max-pods': ['250'], 'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
 
+# Certificates expiration
+openshift_hosted_registry_cert_expire_days=730
+openshift_ca_cert_expire_days=1825
+openshift_node_cert_expire_days=730
+openshift_master_cert_expire_days=730
+etcd_ca_default_days=1825
 
 # host group for masters
 [masters]
@@ -63,6 +72,6 @@ openshift_clock_enabled=true
 {% for host in groups["nodes"] %}
 {{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}
 {%- if not host in groups["masters"] and loop.index == 1 %}
- openshift_node_labels="{'region': 'infra', 'zone': 'east'}" {% else %} openshift_node_labels="{'region': 'primary', 'zone': 'east'}" 
+ openshift_node_labels="{'region': 'infra', 'zone': 'default'}" {% else %} openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
 {% endif %}
 {% endfor %}

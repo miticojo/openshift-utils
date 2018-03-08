@@ -14,6 +14,7 @@ OCP_DOMAIN = 'example.loc'
 OCP_PUBLIC_DOMAIN = 'example.com'
 OCP_LOGGING = false
 OCP_METRICS = false
+OCP_SVC_CATALOG = false
 
 # vagrant plugins to install
 plugins = ["vagrant-sshfs", "vagrant-registration"]
@@ -103,7 +104,8 @@ Vagrant.configure("2") do |config|
              "ocp_public_domain": OCP_PUBLIC_DOMAIN,
              "ocp_version": OCP_VERSION,
              "ocp_hosted_metrics_deploy": OCP_METRICS,
-             "ocp_hosted_logging_deploy": OCP_LOGGING
+             "ocp_hosted_logging_deploy": OCP_LOGGING,
+             "ocp_enable_service_catalog": OCP_SVC_CATALOG
            }
            if USE_LOCAL_REPO
              ansible.extra_vars["ocp_local_package_repository_url"] = LOCAL_REPO_URL
