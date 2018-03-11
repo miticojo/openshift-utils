@@ -1,5 +1,5 @@
 - name: PREPARE | Install pre-requisites packages
-  package: name={{item}} state=latest
+  yum: name={{item}} state=present
   with_items:
   - wget
   - git
@@ -13,7 +13,7 @@
   - psacct
   - atomic-openshift-docker-excluder
   - atomic-openshift-excluder
-  - docker
+  - "docker-{{ocp_docker_ver}}"
   - ansible
   tags: yum
 
@@ -69,3 +69,11 @@
     src: etc/ansible/hosts.j2
     dest: /etc/ansible/hosts
   when: inventory_hostname == groups[ocp_master_group][0]
+
+- name: PREPARE | Generate copy openshift-ansible-dnsmasq.conf.j2
+  copy:
+    src: openshift-ansible-dnsmasq.j2
+    dest: "{{ocp_node_dnsmasq_additional_config_file}}"
+  when:
+  - inventory_hostname in groups[ocp_master_group]
+  - ocp_node_dnsmasq_additional_config_file != ''

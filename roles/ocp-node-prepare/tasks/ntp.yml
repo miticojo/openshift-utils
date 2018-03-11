@@ -1,10 +1,10 @@
 - block:
-  - name: check and install chronyd
+  - name: NTP | check and install chronyd
     package:
       name: chrony
       state: installed
 
-  - name: setup ntp servers
+  - name: NTP | setup ntp servers
     lineinfile:
       regexp: "^server.*"
       line: "server {{item}} iburst"
@@ -12,18 +12,18 @@
     with_items: "{{ocp_ntp_upstream}}"
     register: chrony_conf
 
-  - name: restart chrony service after configuration
+  - name: NTP | restart chrony service after configuration
     service:
       name: chronyd
       state: restarted
       enabled: yes
     when: chrony_conf.changed
 
-  - name: update OS timezone
+  - name: NTP | update OS timezone
     command: timedatectl set-timezone {{ocp_timezone}}
     when: ansible_date_time.tz != ocp_timezone
 
-  - name: disable rtc sync
+  - name: NTP | disable rtc sync
     command: timedatectl set-local-rtc 0
     when: ansible_date_time.tz != ocp_timezone
 
@@ -32,23 +32,23 @@
   - ansible_distribution_version >= '7'
 
 - block:
-  - name: check and install ntpd
+  - name: NTP | check and install ntpd
     package:
       name: ntpd
       state: installed
 
-  - name: set timezone
+  - name: NTP | set timezone
     lineinfile:
       regexp: "^ZONE="
       line: "ZONE={{gnc_timezone}}"
       path: /etc/sysconfig/clock
     when: ansible_date_time.tz != ocp_timezone
 
-  - name: update OS timezone
+  - name: NTP | update OS timezone
     command: tzdata-update
     when: ansible_date_time.tz != ocp_timezone
 
-  - name: setup ntp servers
+  - name: NTP | setup ntp servers
     lineinfile:
       regexp: "^server.*"
       line: "server {{item}} iburst"
@@ -56,17 +56,17 @@
     with_items: "{{ocp_ntp_upstream}}"
     register: ntp_conf
 
-  - name: stop ntp service to force sync
+  - name: NTP | stop ntp service to force sync
     service:
       name: ntpd
       state: stop
     when: ntp_conf.changed
 
-  - name: force ntp sync
+  - name: NTP | force ntp sync
     command: ntpd -gq
     when: ntp_conf.changed
 
-  - name: restart ntp service after configuration
+  - name: NTP | restart ntp service after configuration
     service:
       name: ntpd
       state: restarted

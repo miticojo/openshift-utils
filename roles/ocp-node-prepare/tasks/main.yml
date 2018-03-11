@@ -2,11 +2,19 @@
   include_tasks: facts.yml
   tags: always
 
+- name: Fix SELinux if required
+  include_tasks: selinux.yml
+  when: selinux_check.rc == 1
+
 - name: Fix network interfaces
   include_tasks: network.yml
 
 - name: Setup packages repositories
   include_tasks: repo.yml
+
+- name: Prepare dns
+  include_tasks: dns.yml
+  tags: dns
 
 - name: Prepare ntp
   include_tasks: ntp.yml
@@ -15,10 +23,6 @@
 - name: Prepare node
   include_tasks: prepare.yml
   tags: prepare
-
-- name: Prepare dns
-  include_tasks: dns.yml
-  tags: dns
 
 - name: Update node
   include_tasks: update.yml

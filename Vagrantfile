@@ -8,13 +8,14 @@ LOCAL_REPO_URL = "http://#{ENV['local_yum_repo']}:8000"
 RHN_USER = ENV['rh_user']
 RHN_PASS = ENV['rh_pass']
 RHN_POOL_ID = ENV['rh_pool']
-PRIVATE_NET = "192.168.33."
+PRIVATE_NET = "192.167.33."
 OCP_VERSION = 3.6
 OCP_DOMAIN = 'example.loc'
 OCP_PUBLIC_DOMAIN = 'example.com'
 OCP_LOGGING = false
 OCP_METRICS = false
 OCP_SVC_CATALOG = false
+OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
 
 # vagrant plugins to install
 plugins = ["vagrant-sshfs", "vagrant-registration"]
@@ -51,6 +52,7 @@ Vagrant.configure("2") do |config|
       end
 
       node.vm.provider :virtualbox do |vb, override|
+        vb.linked_clone = true
         vb.memory = "2048"
         vb.cpus = 2
       end
@@ -75,6 +77,7 @@ Vagrant.configure("2") do |config|
       end
 
       node.vm.provider :virtualbox do |vb, override|
+        vb.linked_clone = true
         vb.memory = "2048"
         vb.cpus = 2
       end
@@ -105,7 +108,8 @@ Vagrant.configure("2") do |config|
              "ocp_version": OCP_VERSION,
              "ocp_hosted_metrics_deploy": OCP_METRICS,
              "ocp_hosted_logging_deploy": OCP_LOGGING,
-             "ocp_enable_service_catalog": OCP_SVC_CATALOG
+             "ocp_enable_service_catalog": OCP_SVC_CATALOG,
+             "ocp_net_plugin": OCP_NET_PLUGIN
            }
            if USE_LOCAL_REPO
              ansible.extra_vars["ocp_local_package_repository_url"] = LOCAL_REPO_URL

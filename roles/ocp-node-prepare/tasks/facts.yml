@@ -1,6 +1,7 @@
 - name: FACTS | SELinux is required for openshift 3.x
   shell: "test $(getenforce) == 'Enforcing'"
   changed_when: False
+  register: selinux_check
   ignore_errors: yes
 
 - name: FACTS | Confirm DNS resolution for localhost
@@ -42,3 +43,16 @@
   - hostvars[inventory_hostname]['ansible_' + item].active == true
   - hostvars[inventory_hostname]['ansible_' + item].ipv4.address == ansible_host
   with_items: "{{ansible_interfaces}}"
+
+- name: FACTS | Define docker version for current OCP version
+  set_fact:
+    ocp_docker_ver: "{{ ocp_docker_ver_map | selectattr('ocp', 'equalto', ocp_version) | map(attribute='docker') | list | first }}"
+
+- debug: msg="{{ocp_docker_ver}}"
+
+- name: FACTS | Check  ocp_docker_ver is not empty
+  assert:
+    msg: "ocp_docker_ver is empty or undefined"
+    that:
+    - not ocp_docker_ver is undefined
+    - not ocp_docker_ver == ''

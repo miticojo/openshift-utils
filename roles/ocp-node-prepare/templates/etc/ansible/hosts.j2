@@ -12,7 +12,7 @@ lb
 ansible_ssh_user=root
 deployment_type=openshift-enterprise
 # check disabled for lab purpose (NON PRODUCTION)
-openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability
+openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability,package_version
 # Uncomment the following to enable htpasswd authentication; defaults to
 # DenyAllPasswordIdentityProvider.
 openshift_master_identity_providers={{ocp_master_identity_providers}}
@@ -33,7 +33,10 @@ openshift_master_default_subdomain={{ocp_master_default_subdomain}}
 openshift_hosted_metrics_deploy={{ocp_hosted_metrics_deploy}}
 openshift_hosted_logging_deploy={{ocp_hosted_logging_deploy}}
 openshift_enable_service_catalog={{ocp_enable_service_catalog}}
+os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
 
+openshift_node_dnsmasq_additional_config_file={{ocp_node_dnsmasq_additional_config_file}}
+os_sdn_network_plugin_name={{ocp_network_plugin}}
 openshift_router_selector='region=infra'
 openshift_registry_selector='region=infra'
 openshift_clock_enabled=true
@@ -72,6 +75,8 @@ etcd_ca_default_days=1825
 {% for host in groups["nodes"] %}
 {{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}
 {%- if not host in groups["masters"] and loop.index == 1 %}
- openshift_node_labels="{'region': 'infra', 'zone': 'default'}" {% else %} openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+ openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ {% else %}
+ openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
 {% endif %}
 {% endfor %}

@@ -3,34 +3,3 @@
     src=etc/hosts.j2
     dest=/etc/hosts
   tags: hosts
-
-- name: Install DNSMasq on masters
-  yum: name=dnsmasq state=installed
-  when: inventory_hostname in groups["masters"]
-
-- name: Setup DNSMasq
-  template:
-    src: etc/dnsmasq.d/openshift.conf.j2
-    dest: /etc/dnsmasq.d/openshift.conf
-  notify: restart dnsmasq
-  when: inventory_hostname in groups["masters"]
-
-- block:
-
-  - name: set resolv.conf
-    lineinfile:
-      path: /etc/resolv.conf
-      regexp: '^nameserver'
-      line: 'nameserver 127.0.0.1'
-      backup: yes
-    when: inventory_hostname in groups["masters"]
-
-  - name: set resolv.conf
-    lineinfile:
-      path: /etc/resolv.conf
-      line: "nameserver {{hostvars[item]['ansible_' + ose_internal_iface].ipv4.address}}"
-      backup: yes
-    with_items: "{{groups['masters']}}"
-    when: inventory_hostname in groups["nodes"]
-
-  tags: dnsmasq

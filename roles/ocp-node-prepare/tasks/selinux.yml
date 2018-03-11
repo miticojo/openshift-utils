@@ -1,0 +1,12 @@
+- name: SELINUX | Install libselinux-python
+  package:
+    name: libselinux-python
+    state: installed
+
+- name: SELINUX | Enable SELinux at runtime
+  command: setenforce 1
+
+- name: SELINUX | Enable SELinux at runtime
+  selinux:
+    policy: targeted
+    state: enforcing

@@ -20,9 +20,11 @@ ocp_master_cluster_public_hostname: "ocp.{{ocp_public_domain}}"
 ocp_master_default_subdomain: "apps.{{ocp_public_domain}}"
 ocp_hosted_metrics_deploy: yes
 ocp_hosted_logging_deploy: false
+ocp_network_plugin: 'redhat/openshift-ovs-subnet'
 ocp_local_package_repository: no
 ocp_local_package_repository_url: ''
 ocp_update_machine: no
+ocp_node_dnsmasq_additional_config_file: /usr/share/ansible/openshift-ansible/openshift-ansible-custom.conf.j2
 ocp_dns_upstream:
 - 8.8.8.8
 - 8.8.4.4
@@ -32,3 +34,10 @@ ocp_ntp_upstream:
 - 1.rhel.pool.ntp.org
 - 2.rhel.pool.ntp.org
 - 3.rhel.pool.ntp.org
+ocp_docker_ver_map:
+ - ocp: 3.6
+   docker: 1.12.6
+ - ocp: 3.7
+   docker: 1.12.6
+ - ocp: 3.9
+   docker: 1.12.6
