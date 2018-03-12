@@ -24,10 +24,15 @@ Adjust following variables into Vagrantfile
 OCP_MASTER_HOSTS = 1
 OCP_NODES_HOSTS = 4
 OCP_VERSION = 3.6
+PRIVATE_NET = "192.167.33."
 OCP_LOGGING = false
 OCP_METRICS = false
+OCP_SVC_CATALOG = false
 ```
 then call `vagrant up`
 
 **NOTE:**
 During box rising vagrant-registration plugin will register automatically your machines to RHN.
+
+### Caveats
+If you want to test Vagrant lab with multiple provider on same machine, you have to change PRIVATE_NET for each provider (otherwise you'll run into a net problem).

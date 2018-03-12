@@ -1,15 +1,15 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-OCP_MASTER_HOSTS = 1
-OCP_NODES_HOSTS = 4
+OCP_MASTER_HOSTS = 3
+OCP_NODES_HOSTS = 2
 USE_LOCAL_REPO = true
 LOCAL_REPO_URL = "http://#{ENV['local_yum_repo']}:8000"
 RHN_USER = ENV['rh_user']
 RHN_PASS = ENV['rh_pass']
 RHN_POOL_ID = ENV['rh_pool']
 PRIVATE_NET = "192.167.33."
-OCP_VERSION = 3.6
+OCP_VERSION = 3.7
 OCP_DOMAIN = 'example.loc'
 OCP_PUBLIC_DOMAIN = 'example.com'
 OCP_LOGGING = false
