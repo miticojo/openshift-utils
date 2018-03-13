@@ -12,6 +12,7 @@ PRIVATE_NET = "192.167.33."
 OCP_VERSION = 3.7
 OCP_DOMAIN = 'example.loc'
 OCP_PUBLIC_DOMAIN = 'example.com'
+OCP_MASTER_SUBDOMAIN = 'apps.example.com'
 OCP_LOGGING = false
 OCP_METRICS = false
 OCP_SVC_CATALOG = false
@@ -105,6 +106,7 @@ Vagrant.configure("2") do |config|
              "ocp_rhn_pool_ids": RHN_POOL_ID,
              "ocp_internal_domain": OCP_DOMAIN,
              "ocp_public_domain": OCP_PUBLIC_DOMAIN,
+             "ocp_master_default_subdomain": OCP_MASTER_SUBDOMAIN,
              "ocp_version": OCP_VERSION,
              "ocp_hosted_metrics_deploy": OCP_METRICS,
              "ocp_hosted_logging_deploy": OCP_LOGGING,

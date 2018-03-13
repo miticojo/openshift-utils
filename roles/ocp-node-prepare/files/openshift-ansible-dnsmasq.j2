@@ -1,1 +1,2 @@
 listen-address={{ hostvars[inventory_hostname].openshift_ip }}
+address=/.{{openshift_master_default_subdomain}}/{{ hostvars[groups["nodes"][0]].openshift_ip }}
