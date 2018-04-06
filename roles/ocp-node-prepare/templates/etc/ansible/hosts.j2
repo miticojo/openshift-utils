@@ -30,6 +30,7 @@ openshift_master_default_subdomain={{ocp_master_default_subdomain}}
 # override the default controller lease ttl
 #osm_controller_lease_ttl=30
 
+# Metrics
 openshift_hosted_metrics_deploy={{ocp_hosted_metrics_deploy}}
 openshift_hosted_logging_deploy={{ocp_hosted_logging_deploy}}
 openshift_enable_service_catalog={{ocp_enable_service_catalog}}
@@ -49,6 +50,12 @@ openshift_ca_cert_expire_days=1825
 openshift_node_cert_expire_days=730
 openshift_master_cert_expire_days=730
 etcd_ca_default_days=1825
+
+# Docker version
+docker_version="{{ocp_docker_ver}}"
+
+# Configure nodeIP in the node config
+openshift_set_node_ip=True
 
 # host group for masters
 [masters]

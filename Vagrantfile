@@ -10,6 +10,7 @@ RHN_PASS = ENV['rh_pass']
 RHN_POOL_ID = ENV['rh_pool']
 PRIVATE_NET = "192.167.33."
 OCP_VERSION = 3.7
+OCP_DOCKER_VER = 1.13.1
 OCP_DOMAIN = 'example.loc'
 OCP_PUBLIC_DOMAIN = 'example.com'
 OCP_MASTER_SUBDOMAIN = 'apps.example.com'
@@ -119,7 +120,8 @@ Vagrant.configure("2") do |config|
              "ocp_hosted_metrics_deploy": OCP_METRICS,
              "ocp_hosted_logging_deploy": OCP_LOGGING,
              "ocp_enable_service_catalog": OCP_SVC_CATALOG,
-             "ocp_net_plugin": OCP_NET_PLUGIN
+             "ocp_net_plugin": OCP_NET_PLUGIN,
+             "ocp_docker_ver": OCP_DOCKER_VER
            }
            if USE_LOCAL_REPO
              ansible.extra_vars["ocp_local_package_repository_url"] = LOCAL_REPO_URL

@@ -1,20 +1,6 @@
 - name: PREPARE | Install pre-requisites packages
-  yum: name={{item}} state=present
-  with_items:
-  - wget
-  - git
-  - net-tools
-  - bind-utils
-  - iptables-services
-  - bridge-utils
-  - bash-completion
-  - kexec-tools
-  - sos
-  - psacct
-  - atomic-openshift-docker-excluder
-  - atomic-openshift-excluder
-  - "docker-{{ocp_docker_ver}}"
-  - ansible
+  yum: name={{item}} state=latest
+  with_items: "{{ocp_prereq_packages}}"
   tags: yum
 
 - name: PREPARE | Set insecure registry for local docker network

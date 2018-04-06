@@ -34,10 +34,30 @@ ocp_ntp_upstream:
 - 1.rhel.pool.ntp.org
 - 2.rhel.pool.ntp.org
 - 3.rhel.pool.ntp.org
+
 ocp_docker_ver_map:
  - ocp: 3.6
    docker: 1.12.6
  - ocp: 3.7
    docker: 1.12.6
  - ocp: 3.9
-   docker: 1.12.6
+   docker: 1.13.1
+
+ocp_docker_ver: "{{ ocp_docker_ver_map | selectattr('ocp', 'equalto', ocp_version) | map(attribute='docker') | list | first }}"
+
+ocp_prereq_packages:
+- wget
+- git
+- net-tools
+- bind-utils
+- iptables-services
+- bridge-utils
+- bash-completion
+- kexec-tools
+- sos
+- psacct
+- atomic-openshift-docker-excluder
+- atomic-openshift-excluder
+- "docker-{{ ocp_docker_vert }}"
+- ansible
+- NetworkManager
