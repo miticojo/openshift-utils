@@ -28,8 +28,12 @@
         --enable rhel-{{ ansible_distribution_major_version }}-server-rpms \
         --enable rhel-{{ ansible_distribution_major_version }}-server-extras-rpms \
         --enable rhel-{{ ansible_distribution_major_version }}-server-ose-{{ocp_version}}-rpms \
-        --enable rhel-{{ ansible_distribution_major_version }}-fast-datapath-rpms
-
+        --enable rhel-{{ ansible_distribution_major_version }}-fast-datapath-rpms 
+  
+  - name: REPOS | add ansible repo for ose 3.9
+    command: subscription-manager repos --enable=rhel-7-server-ansible-2.4-rpms
+    when: ocp_version >= 3.9
+    
   when:
   - ocp_rhn_user != '' and ocp_rhn_pass != ''
   - not ocp_local_package_repository
@@ -48,6 +52,18 @@
   - rhel-{{ ansible_distribution_major_version }}-server-ose-{{ocp_version}}-rpms
   - rhel-{{ ansible_distribution_major_version }}-fast-datapath-rpms
   when: ocp_local_package_repository
+  tags: repos
+
+- name: REPOS | add local repository for 3.9
+  yum_repository:
+    name: "{{item}}"
+    description: "{{item}} repo"
+    file: local_repos
+    baseurl: "{{ocp_local_package_repository_url}}/{{item}}"
+    gpgcheck: no
+  with_items:
+  - rhel-7-server-ansible-2.4-rpms
+  when: ocp_local_package_repository and ocp_version >= 3.9
   tags: repos
 
 - name: REPOS | clean local cache
