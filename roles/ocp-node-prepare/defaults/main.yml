@@ -58,6 +58,6 @@ ocp_prereq_packages:
 - psacct
 - atomic-openshift-docker-excluder
 - atomic-openshift-excluder
-- "docker-{{ ocp_docker_vert }}"
+- "docker-{{ ocp_docker_ver }}"
 - ansible
 - NetworkManager
