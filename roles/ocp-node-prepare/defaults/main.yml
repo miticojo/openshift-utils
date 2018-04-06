@@ -40,4 +40,4 @@ ocp_docker_ver_map:
  - ocp: 3.7
    docker: 1.12.6
  - ocp: 3.9
-   docker: 1.12.6
+   docker: 1.13.1
