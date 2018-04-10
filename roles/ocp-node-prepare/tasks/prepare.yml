@@ -63,3 +63,6 @@
   when:
   - inventory_hostname in groups[ocp_master_group]
   - ocp_node_dnsmasq_additional_config_file != ''
+
+- name: PREPARE | Enable atomic excluder
+  command: atomic-openshift-excluder enable
