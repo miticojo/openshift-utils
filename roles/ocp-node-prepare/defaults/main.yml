@@ -24,6 +24,7 @@ ocp_network_plugin: 'redhat/openshift-ovs-subnet'
 ocp_local_package_repository: no
 ocp_local_package_repository_url: ''
 ocp_update_machine: no
+ocp_container_runtime_docker_storage_type: overlay2
 ocp_node_dnsmasq_additional_config_file: /usr/share/ansible/openshift-ansible/openshift-ansible-custom.conf.j2
 ocp_dns_upstream:
 - 8.8.8.8
@@ -61,3 +62,5 @@ ocp_prereq_packages:
 - "docker-{{ ocp_docker_ver }}"
 - ansible
 - NetworkManager
+
+ocp_vagrant_provider: ''

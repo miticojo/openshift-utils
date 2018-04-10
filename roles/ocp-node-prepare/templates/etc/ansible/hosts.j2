@@ -57,6 +57,12 @@ docker_version="{{ocp_docker_ver}}"
 # Configure nodeIP in the node config
 openshift_set_node_ip=True
 
+{% if ocp_vagrant_provider != '' %}
+ocp_vagrant_provider="{{ocp_vagrant_provider}}"
+{% endif %}
+
+container_runtime_docker_storage_type={{ocp_container_runtime_docker_storage_type}}
+
 # host group for masters
 [masters]
 {% for host in groups["masters"] %}

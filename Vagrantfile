@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 OCP_MASTER_HOSTS = 1
-OCP_NODES_HOSTS = 3
+OCP_NODES_HOSTS = 2
 USE_LOCAL_REPO = true
 LOCAL_REPO_URL = "http://#{ENV['local_yum_repo']}:8000"
 RHN_USER = ENV['rh_user']
@@ -18,7 +18,7 @@ OCP_LOGGING = false
 OCP_METRICS = false
 OCP_SVC_CATALOG = false
 OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
-
+OCP_CONTAINER_RUNTIME_STORAGE = 'overlay2'
 # vagrant plugins to install
 plugins = ["vagrant-sshfs", "vagrant-registration"]
 
@@ -27,6 +27,13 @@ plugins.each do |plugin|
     system("vagrant plugin install #{plugin}")
     abort("Plugin installed - run 'vagrant up' again")
   end
+end
+
+if ARGV[1] and \
+   (ARGV[1].split('=')[0] == "--provider" or ARGV[2])
+  provider = (ARGV[1].split('=')[1] || ARGV[2])
+else
+  provider = (ENV['VAGRANT_DEFAULT_PROVIDER'] || :virtualbox).to_sym
 end
 
 Vagrant.configure("2") do |config|
@@ -121,7 +128,9 @@ Vagrant.configure("2") do |config|
              "ocp_hosted_logging_deploy": OCP_LOGGING,
              "ocp_enable_service_catalog": OCP_SVC_CATALOG,
              "ocp_net_plugin": OCP_NET_PLUGIN,
-             "ocp_docker_ver": OCP_DOCKER_VER
+             "ocp_docker_ver": OCP_DOCKER_VER,
+             "ocp_vagrant_provider": provider,
+	     "ocp_container_runtime_docker_storage_type": OCP_CONTAINER_RUNTIME_STORAGE
            }
            if USE_LOCAL_REPO
              ansible.extra_vars["ocp_local_package_repository_url"] = LOCAL_REPO_URL
