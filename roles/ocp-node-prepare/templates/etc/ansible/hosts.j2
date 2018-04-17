@@ -11,6 +11,7 @@ lb
 [OSEv3:vars]
 ansible_ssh_user=root
 deployment_type=openshift-enterprise
+
 # check disabled for lab purpose (NON PRODUCTION)
 openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability,package_version
 # Uncomment the following to enable htpasswd authentication; defaults to
@@ -27,15 +28,15 @@ openshift_master_cluster_method={{ocp_master_cluster_method}}
 openshift_master_cluster_hostname={{ocp_master_cluster_hostname}}
 openshift_master_cluster_public_hostname={{ocp_master_cluster_public_hostname}}
 openshift_master_default_subdomain={{ocp_master_default_subdomain}}
-# override the default controller lease ttl
-#osm_controller_lease_ttl=30
+openshift_master_audit_config={"enabled": true, "auditFilePath": "/var/log/rhocp-audit.log", "maximumFileRetentionDays": 14, "maximumFileSizeMegabytes": 500, "maximumRetainedFiles": 5}
+openshift_docker_options="--log-driver json-file --log-opt max-size=10M --log-opt max-file=1"
 
 # Metrics
 openshift_hosted_metrics_deploy={{ocp_hosted_metrics_deploy}}
 openshift_hosted_logging_deploy={{ocp_hosted_logging_deploy}}
 openshift_enable_service_catalog={{ocp_enable_service_catalog}}
-os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
 
+# Network
 openshift_node_dnsmasq_additional_config_file={{ocp_node_dnsmasq_additional_config_file}}
 os_sdn_network_plugin_name={{ocp_network_plugin}}
 openshift_router_selector='region=infra'
