@@ -39,9 +39,14 @@ openshift_enable_service_catalog={{ocp_enable_service_catalog}}
 # Network
 openshift_node_dnsmasq_additional_config_file={{ocp_node_dnsmasq_additional_config_file}}
 os_sdn_network_plugin_name={{ocp_network_plugin}}
+
+# Default Selector
+osm_default_node_selector='region=primary'
 openshift_router_selector='region=infra'
 openshift_registry_selector='region=infra'
+
 openshift_clock_enabled=true
+
 # apply updated node defaults
 openshift_node_kubelet_args={'pods-per-core': ['10'], 'max-pods': ['250'], 'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
 
