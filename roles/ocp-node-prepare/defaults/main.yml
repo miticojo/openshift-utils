@@ -62,5 +62,9 @@ ocp_prereq_packages:
 - "docker-{{ ocp_docker_ver }}"
 - ansible
 - NetworkManager
+- yum-utils
 
 ocp_vagrant_provider: ''
+
+ocp_default_users:
+- admin
