@@ -29,7 +29,6 @@ openshift_master_cluster_hostname={{ocp_master_cluster_hostname}}
 openshift_master_cluster_public_hostname={{ocp_master_cluster_public_hostname}}
 openshift_master_default_subdomain={{ocp_master_default_subdomain}}
 openshift_master_audit_config={"enabled": true, "auditFilePath": "/var/log/rhocp-audit.log", "maximumFileRetentionDays": 14, "maximumFileSizeMegabytes": 500, "maximumRetainedFiles": 5}
-openshift_docker_options="--log-driver json-file --log-opt max-size=10M --log-opt max-file=1"
 
 # Metrics
 openshift_hosted_metrics_deploy={{ocp_hosted_metrics_deploy}}
@@ -39,6 +38,13 @@ openshift_enable_service_catalog={{ocp_enable_service_catalog}}
 # Network
 openshift_node_dnsmasq_additional_config_file={{ocp_node_dnsmasq_additional_config_file}}
 os_sdn_network_plugin_name={{ocp_network_plugin}}
+osm_cluster_network_cidr=10.128.0.0/14
+openshift_portal_net=172.30.0.0/16
+#openshift_master_external_ip_network_cidrs=['0.0.0.0/0']
+#openshift_master_ingress_ip_network_cidr=172.46.0.0/16
+#openshift_master_api_port=8443
+#openshift_master_console_port=8443
+openshift_set_node_ip=True
 
 # Default Selector
 osm_default_node_selector='region=primary'
@@ -47,7 +53,7 @@ openshift_registry_selector='region=infra'
 
 openshift_clock_enabled=true
 
-# apply updated node defaults
+# Node kubelet config
 openshift_node_kubelet_args={'pods-per-core': ['10'], 'max-pods': ['250'], 'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
 
 # Certificates expiration
@@ -57,17 +63,19 @@ openshift_node_cert_expire_days=730
 openshift_master_cert_expire_days=730
 etcd_ca_default_days=1825
 
-# Docker version
+# Container engine config
+container_runtime_docker_storage_type={{ocp_container_runtime_docker_storage_type}}
 docker_version="{{ocp_docker_ver}}"
+openshift_docker_options="--log-driver json-file --log-opt max-size=10M --log-opt max-file=1"
 
-# Configure nodeIP in the node config
-openshift_set_node_ip=True
+# Console/SSN config
+#openshift_master_session_name=ssn
+#openshift_master_session_max_seconds=3600
 
 {% if ocp_vagrant_provider != '' %}
 ocp_vagrant_provider="{{ocp_vagrant_provider}}"
 {% endif %}
 
-container_runtime_docker_storage_type={{ocp_container_runtime_docker_storage_type}}
 
 # host group for masters
 [masters]
