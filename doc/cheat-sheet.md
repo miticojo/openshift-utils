@@ -1,4 +1,4 @@
-## A list of useful command tricks**
+## A list of useful command tricks
 
 ### Nodes
 
