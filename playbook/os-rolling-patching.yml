@@ -1,0 +1,74 @@
+# Openshift Node OS Rolling Patching
+# Note: restart node only if really needed
+
+- hosts: nodes
+  serial: 1
+  
+  vars:
+    cves: "RHSA-2018:1231"
+  
+  tasks:
+  - name: get current schedulable state 
+    command: oc get node {{inventory_hostname}} -o json
+    register: nodeinfo
+    delegate_to: "{{groups.masters.0}}"
+
+  - set_fact: unschedulable="{{(nodeinfo.stdout | from_json).spec.unschedulable | default('false')}}"
+
+  - name: make node unschedulable
+    command: oc adm manage-node {{inventory_hostname}} --schedulable=false
+    delegate_to: "{{groups.masters.0}}"
+    retries: 10
+    delay: 5
+    register: node_schedulable_result
+    until: node_schedulable_result|succeeded
+    when: not unschedulable
+  
+  - name: drain node from OCP cluster
+    command: oc adm drain {{inventory_hostname}} --force --ignore-daemonsets=true
+    register: node_drain_result
+    failed_when:
+    - not (node_drain_result.stdout.find('already') != -1)
+    - node_drain_result.rc != 0
+    delegate_to: "{{groups.masters.0}}"
+    when: not unschedulable
+  
+  - name: apply security CVE
+    command: "yum update --cves={{cves}} --security -y"   
+ 
+  - name: Check for reboot hint.
+    shell: LAST_KERNEL=$(rpm -q --last kernel | awk 'NR==1{sub(/kernel-/,""); print $1}'); CURRENT_KERNEL=$(uname -r); if [ $LAST_KERNEL != $CURRENT_KERNEL ]; then echo 'reboot'; else echo 'no'; fi
+    ignore_errors: true
+    register: reboot_hint
+
+  - name: Restart master system
+    shell: sleep 2 && shutdown -r now "Machine restart after update"
+    when: reboot_hint.stdout.find("reboot") != -1
+    register: rebooting
+    async: 1
+    poll: 0
+    ignore_errors: true
+    become: yes
+
+  - set_fact:
+      wait_for_host: "{{ ansible_host }}"
+
+  - name: Wait for master to restart
+    local_action:
+      module: wait_for
+        host="{{ wait_for_host }}"
+        state=started
+        delay=10
+        timeout=600
+        port="{{ ansible_port | default(ansible_ssh_port | default(22,boolean=True),boolean=True) }}"
+    become: no
+    when: rebooting|changed
+ 
+  - name: make node schedulable again
+    command: oc adm manage-node {{inventory_hostname}} --schedulable=true
+    delegate_to: "{{groups.masters.0}}"
+    retries: 10
+    delay: 5
+    register: node_schedulable_result
+    until: node_schedulable_result|succeeded
+    when: not unschedulable
