@@ -63,3 +63,11 @@
     delay: 5
     register: node_schedulable_result
     until: node_schedulable_result|succeeded
+    
+  - name: wait for node to be in Ready status
+    command: oc get nodes {{inventory_hostname}}
+    delegate_to: "{{groups.masters.0}}"
+    retries: 10
+    delay: 5
+    register: node_status_result
+    until: (node_status_result.stdout.find("NotReady") == -1) and (node_status_result.stdout.find("Ready") != -1)
