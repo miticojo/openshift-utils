@@ -6,9 +6,21 @@ A curated list for awesome Openshift sources based on:
 
 Menu
 =======================================================================
+* [Release notes](#release-notes)
 * [Installation / Setup](#installation-or-setup)
 * [Networking](#networking)
 
+Release Notes
+=======================================================================
+* [3.9](https://access.redhat.com/documentation/en-us/openshift_container_platform/3.9/html/release_notes/release-notes-ocp-3-9-release-notes)
+* [3.7](https://access.redhat.com/documentation/en-us/openshift_container_platform/3.7/html/release_notes/release-notes-ocp-3-7-release-notes)
+* [3.6](https://access.redhat.com/documentation/en-us/openshift_container_platform/3.6/html/release_notes/release-notes-ocp-3-6-release-notes)
+* [3.5](https://access.redhat.com/documentation/en-us/openshift_container_platform/3.5/html/release_notes/release-notes-ocp-3-5-release-notes)
+
+Upcoming Releases
+=======================================================================
+* [Public Roadmap](https://ci.openshift.redhat.com/roadmap_overview.html)
+* [Next Releases](https://ci.openshift.redhat.com/releases_overview.html)
 
 Installation / Setup
 =======================================================================
