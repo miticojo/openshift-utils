@@ -6,10 +6,25 @@ A curated list for awesome Openshift sources based on:
 
 Menu
 =======================================================================
-* [Release notes](#release-notes)
 * [Installation / Setup](#installation-or-setup)
-* [Security](#security) 
+* [Management](#management)
 * [Networking](#networking)
+* [Release notes](#release-notes)
+* [Security](#security) 
+
+Installation / Setup
+=======================================================================
+TBD
+
+Manangement
+=======================================================================
+* [Custom Role Creation](http://v1.uncontained.io/playbooks/operationalizing/custom_role_creation.html)
+* [Openshift Roles and Responsibilities](http://v1.uncontained.io/playbooks/fundamentals/openshift_roles_responsibilities.html)
+
+Networking
+=======================================================================
+* [OpenShift and Network Security Zones: Coexistence Approaches](https://blog.openshift.com/openshift-and-network-security-zones-coexistence-approaches)
+* [Limiting the Bandwidth Available to Pods](https://docs.openshift.com/container-platform/3.9/admin_guide/managing_pods.html#admin-guide-manage-pods-limit-bandwidth) - available from 3.4
 
 Release Notes
 =======================================================================
@@ -23,16 +38,7 @@ Upcoming Releases
 * [Public Roadmap](https://ci.openshift.redhat.com/roadmap_overview.html)
 * [Next Releases](https://ci.openshift.redhat.com/releases_overview.html)
 
-Installation / Setup
-=======================================================================
-TBD
-
 Security
 =======================================================================
 * [Openshift 3.9 - Container Security Guide](https://docs.openshift.com/container-platform/3.9/security/index.html)
 * [Red Hat OpenShift Product Applicability Guide for PCI DSS 3.2 Final v1.0](https://www.redhat.com/cms/managed-files/cl-red-hat-openshift-product-applicability-guide-datasheet-f8620-201708-en.pdf)
-
-Networking
-=======================================================================
-* [OpenShift and Network Security Zones: Coexistence Approaches](https://blog.openshift.com/openshift-and-network-security-zones-coexistence-approaches)
-* [Limiting the Bandwidth Available to Pods](https://docs.openshift.com/container-platform/3.9/admin_guide/managing_pods.html#admin-guide-manage-pods-limit-bandwidth) - available from 3.4
