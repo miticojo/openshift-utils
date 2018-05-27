@@ -9,6 +9,7 @@ Menu
 * [Installation / Setup](#installation-or-setup)
 * [Management](#management)
 * [Networking](#networking)
+* [Reference architecture guides](#reference-architecture-guides)
 * [Release notes](#release-notes)
 * [Security](#security) 
 
@@ -25,6 +26,15 @@ Networking
 =======================================================================
 * [OpenShift and Network Security Zones: Coexistence Approaches](https://blog.openshift.com/openshift-and-network-security-zones-coexistence-approaches)
 * [Limiting the Bandwidth Available to Pods](https://docs.openshift.com/container-platform/3.9/admin_guide/managing_pods.html#admin-guide-manage-pods-limit-bandwidth) - available from 3.4
+
+Reference Architecture Guides
+=======================================================================
+* [Red Hat OpenStack Platform](https://access.redhat.com/documentation/en-us/reference_architectures/2018/html/deploying_and_managing_openshift_3.9_on_red_hat_openstack_platform_10/)
+* [Amazon Web Services (AWS)](https://access.redhat.com/documentation/en-us/reference_architectures/2018/html/deploying_and_managing_openshift_3.9_on_amazon_web_services/)
+* [Microsoft Azure public cloud](https://access.redhat.com/documentation/en-us/reference_architectures/2018/html/deploying_and_managing_openshift_3.9_on_azure/)
+* [Google Cloud Platform (GCP)](https://access.redhat.com/documentation/en-us/reference_architectures/2018/html/deploying_and_managing_openshift_3.9_on_google_cloud_platform/)
+* [VMware vSphere](https://access.redhat.com/documentation/en-us/reference_architectures/2018/html/deploying_and_managing_openshift_3.9_on_vmware_vsphere/)
+* [Red Hat Virtualization (RHV)](https://access.redhat.com/documentation/en-us/reference_architectures/2018/pdf/deploying_and_managing_openshift_3.9_on_red_hat_virtualization_4/Reference_Architectures-2018-Deploying_and_Managing_OpenShift_3.9_on_Red_Hat_Virtualization_4-en-US.pdf)
 
 Release Notes
 =======================================================================
