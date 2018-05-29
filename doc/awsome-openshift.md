@@ -15,7 +15,7 @@ Menu
 
 Installation / Setup
 =======================================================================
-TBD
+* [Single Component Installation](https://docs.openshift.com/container-platform/3.9/install_config/install/advanced_install.html#running-the-advanced-installation-individual-components) -  from 3.7 
 
 Manangement
 =======================================================================
