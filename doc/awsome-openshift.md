@@ -6,7 +6,7 @@ A curated list for awesome Openshift sources based on:
 
 Menu
 =======================================================================
-* [Installation / Setup](#installation-or-setup)
+* [Installation / Setup](#installation--setup)
 * [Management](#management)
 * [Networking](#networking)
 * [Reference architecture guides](#reference-architecture-guides)
