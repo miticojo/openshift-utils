@@ -11,5 +11,5 @@
 
 * Test SDN for all nodes<br> 
   ```
-  oc get hostsubnet -o custom-columns="subnet:subnet" | grep 10 | awk -F'.' '{print $1 "." $2 "." $3 ".1" }' | xargs -I {} ping -c 1 {}
+  oc get hostsubnet -o custom-columns="subnet:subnet" --no-headers | awk -F'.' '{print $1 "." $2 "." $3 ".1" }' | xargs -I {} ping -c 1 {}
   ```
