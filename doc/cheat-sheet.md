@@ -2,9 +2,9 @@
 
 ### Client
 * Get latest version of linux client
-```
-curl -s https://api.github.com/repos/openshift/origin/releases/latest | jq -r ".assets[] | select(.browser_download_url | contains(\"linux\")) | select(.browser_download_url | contains(\"server\") | not ) | .browser_download_url"
-```
+  ```
+  curl -s https://api.github.com/repos/openshift/origin/releases/latest | jq -r ".assets[] | select(.browser_download_url | contains(\"linux\")) | select(.browser_download_url | contains(\"server\") | not ) | .browser_download_url"
+  ```
 
 
 ### Nodes
