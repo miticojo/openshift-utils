@@ -34,6 +34,8 @@ openshift_master_audit_config={"enabled": true, "auditFilePath": "/var/log/rhocp
 openshift_hosted_metrics_deploy={{ocp_hosted_metrics_deploy}}
 openshift_hosted_logging_deploy={{ocp_hosted_logging_deploy}}
 openshift_enable_service_catalog={{ocp_enable_service_catalog}}
+openshift_enable_service_catalog={{ocp_enable_service_catalog}}
+ansible_service_broker_install={{ocp_enable_ansible_service_broker}}
 
 # Network
 openshift_node_dnsmasq_additional_config_file={{ocp_node_dnsmasq_additional_config_file}}
@@ -50,6 +52,17 @@ openshift_set_node_ip=True
 osm_default_node_selector='region=primary'
 openshift_router_selector='region=infra'
 openshift_registry_selector='region=infra'
+openshift_prometheus_node_selector={"region":"infra"}
+openshift_metrics_cassandra_nodeselector={"region":"infra"}
+openshift_metrics_hawkular_nodeselector={"region":"infra"}
+openshift_metrics_heapster_nodeselector={"region":"infra"}
+openshift_logging_es_nodeselector={"region":"infra"}
+openshift_logging_kibana_nodeselector={"region":"infra"}
+openshift_logging_curator_nodeselector={"region":"infra"}
+openshift_hosted_infra_selector={"region": "infra"}
+openshift_hosted_router_selector='region=infra'
+openshift_hosted_registry_selector='region=infra'
+template_service_broker_selector={"region":"infra"}
 
 openshift_clock_enabled=true
 
@@ -101,9 +114,11 @@ ocp_vagrant_provider="{{ocp_vagrant_provider}}"
 [nodes]
 {% for host in groups["nodes"] %}
 {{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}
-{%- if not host in groups["masters"] and loop.index == 1 %}
+{%- if not host in groups["masters"] and not "infra" in groups and "node1" in host %}
  openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
- {% else %}
+{% elif not host in groups["masters"] and "infra" in groups and "infra1" in host %}
+ openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+{% else %}
  openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
 {% endif %}
 {% endfor %}
