@@ -20,3 +20,15 @@
   ```
   oc get hostsubnet -o custom-columns="subnet:subnet" --no-headers | awk -F'.' '{print $1 "." $2 "." $3 ".1" }' | xargs -I {} ping -c 1 {}
   ```
+
+### Storage
+
+* Collect gluster volume name from pv
+  ```
+  oc get pv -o custom-columns=vol:.spec.glusterfs.path --no-headers | grep -v none
+  ```
+  
+* Collect all volumes id (excluded heketidb) 
+  ```
+  heketi-cli volume list | grep vol\_ | cut -d':' -f2 | awk '{print $1}'
+  ```
