@@ -18,6 +18,7 @@ Installation / Setup
 =======================================================================
 * [Single Component Installation](https://docs.openshift.com/container-platform/3.9/install_config/install/advanced_install.html#running-the-advanced-installation-individual-components) -  from 3.7 
 * [Health Checks](https://docs.openshift.com/container-platform/3.9/admin_guide/diagnostics_tool.html#ansible-based-tooling-health-checks)
+* [Cluster Capacity](https://docs.openshift.com/container-platform/3.9/admin_guide/cluster_capacity.html)
 
 Manangement
 =======================================================================
