@@ -34,6 +34,8 @@ declare -a clsObjs=(
 )
 
 declare -a prjObjs=(
+ "namespace"
+ "project"
  "pods" 
  "replicationcontrollers" 
  "deploymentconfigs" 
