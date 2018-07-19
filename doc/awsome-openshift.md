@@ -62,3 +62,4 @@ Utils Repos
 =======================================================================
 * [BBVA - Openshift resources](https://github.com/BBVA/openshift-utils)
 * [OpenShift, Kubernetes and Docker: Performance, Scalability and Capacity Planning Research by Red Hat](https://github.com/openshift/svt)
+* [Openshift Python Client](https://github.com/openshift/openshift-restclient-python/#openshift-python-client)
