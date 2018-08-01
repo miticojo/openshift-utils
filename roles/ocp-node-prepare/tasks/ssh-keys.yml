@@ -7,7 +7,7 @@
 - name: SSH | Create private/public ssh key for OCP ansible deployment
   command: ssh-keygen -b 4096 -t rsa -f ~/.ssh/id_rsa -q -N ""
   register: ssh_keygen
-  when: inventory_hostname == groups[ocp_master_group][0]
+  #when: inventory_hostname == groups[ocp_master_group][0]
   failed_when:
   - ssh_keygen.rc != 0
   - not "already exists" in ssh_keygen.stdout
