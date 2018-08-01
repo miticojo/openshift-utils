@@ -32,7 +32,7 @@
   
   - name: REPOS | add ansible repo for ose 3.9
     command: subscription-manager repos --enable=rhel-7-server-ansible-2.4-rpms
-    when: ocp_version >= 3.9
+    when:  "{{ ocp_version | version_compare('3.9', '>=')}}"
     
   when:
   - ocp_rhn_user != '' and ocp_rhn_pass != ''
@@ -63,7 +63,7 @@
     gpgcheck: no
   with_items:
   - rhel-7-server-ansible-2.4-rpms
-  when: ocp_local_package_repository and ocp_version >= 3.9
+  when: ocp_local_package_repository and "{{ ocp_version | version_compare('3.9', '>=')}}"
   tags: repos
 
 - name: REPOS | clean local cache

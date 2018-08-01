@@ -37,11 +37,13 @@ ocp_ntp_upstream:
 - 3.rhel.pool.ntp.org
 
 ocp_docker_ver_map:
- - ocp: 3.6
+ - ocp: '3.6'
    docker: 1.12.6
- - ocp: 3.7
+ - ocp: '3.7'
    docker: 1.12.6
- - ocp: 3.9
+ - ocp: '3.9'
+   docker: 1.13.1
+ - ocp: '3.10'
    docker: 1.13.1
 
 ocp_docker_ver: "{{ ocp_docker_ver_map | selectattr('ocp', 'equalto', ocp_version) | map(attribute='docker') | list | first }}"
