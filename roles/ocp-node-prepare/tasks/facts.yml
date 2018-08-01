@@ -11,10 +11,12 @@
 - name: FACTS | Confirm DNS resoultion for short domain name of this host
   shell: "ping -c1 $(hostname -s)"
   changed_when: False
+  failed_when: false
 
 - name: FACTS | Confirm DNS resolution for fully-qualified domain name of this host
   shell: "ping -c1 $(hostname -f)"
   changed_when: False
+  failed_when: false
 
 - name: FACTS | Check if variables are not empty
   assert:
@@ -48,11 +50,17 @@
   set_fact:
     ocp_docker_ver: "{{ ocp_docker_ver_map | selectattr('ocp', 'equalto', ocp_version) | map(attribute='docker') | list | first }}"
 
-- debug: msg="{{ocp_docker_ver}}"
-
 - name: FACTS | Check  ocp_docker_ver is not empty
   assert:
     msg: "ocp_docker_ver is empty or undefined"
     that:
     - not ocp_docker_ver is undefined
     - not ocp_docker_ver == ''
+
+- name: FACTS | Disable blacklist services
+  service:
+    name: "{{item}}"
+    state: stopped
+    enabled: false
+  with_items: "{{ocp_backlist_services}}"
+  ignore_errors: yes

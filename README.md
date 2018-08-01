@@ -11,6 +11,7 @@ Tested with Vagrant 2.x and provider libvirt/virtualbox/vmware_fusion
 * vagrant plugins:
   * vagrant-sshfs
   * vagrant-registration
+  * hostmanager
   * vagrant-libvirt-plugin (if you use libvirt)
   * vagrant-vmware-plugin (if you use vmware - need license)
 * env variables:

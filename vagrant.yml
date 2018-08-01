@@ -3,5 +3,17 @@
 
   tasks:
   - name: run Openshift Node Preparation
-    import_role:
+    include_role:
       name: ocp-node-prepare
+    vars:
+      ocp_bastion_host: "{{groups.lb.0}}"
+      ocp_proxy_host: "{{groups.lb.0}}"
+      ocp_proxy_port: 8080
+    when: inventory_hostname in groups.OSEv3
+    tags: [security, network, repo, rhn, dns, ntp, prepare, update, ssh]
+
+
+  - name: run Openshift Bastion Host Preparation
+    include_role:
+      name: ocp-bastion-prepare
+    when: inventory_hostname == groups.lb.0

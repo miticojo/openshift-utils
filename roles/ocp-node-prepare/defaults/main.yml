@@ -1,6 +1,7 @@
 ocp_master_group: masters
 ocp_node_group: nodes
 ocp_etcd_group: etcd
+ocp_bastion_host: bastion
 ocp_version: 3.6
 ocp_rhn_user: "{{ lookup('env','rh_user') | default('')}}"
 ocp_rhn_pass: "{{ lookup('env','rh_pass') | default('')}}"
@@ -45,7 +46,8 @@ ocp_docker_ver_map:
    docker: 1.13.1
 
 ocp_docker_ver: "{{ ocp_docker_ver_map | selectattr('ocp', 'equalto', ocp_version) | map(attribute='docker') | list | first }}"
-
+ocp_proxy_host: ''
+ocp_proxy_port: ''
 ocp_prereq_packages:
 - wget
 - git
@@ -57,10 +59,10 @@ ocp_prereq_packages:
 - kexec-tools
 - sos
 - psacct
-- atomic-openshift-docker-excluder
-- atomic-openshift-excluder
+- yum-utils
 - "docker-{{ ocp_docker_ver }}"
-- ansible
 - NetworkManager
 
 ocp_vagrant_provider: ''
+ocp_backlist_services:
+- puppet

@@ -1,0 +1,29 @@
+- name: install nfs utils
+  yum:
+    name: nfs-utils
+    state: installed
+
+- name: create nfs root folder
+  file:
+    path: "{{obp_nfs_root_folder}}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+
+- name: setup nfs export
+  lineinfile:
+    line: "{{obp_nfs_root_folder}}{{item.share}}  {{item.network}}({{item.options}})"
+    dest: /etc/exports
+  with_items: "{{obp_nfs_shares}}"
+  notify: restart nfs server
+
+- name: enable nfs services
+  service:
+    name: "{{item}}"
+    state: started
+    enabled: yes
+  with_items:
+  - nfs
+  - nfs-lock
+  - rpcbind

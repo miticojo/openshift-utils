@@ -5,12 +5,15 @@
 - name: Fix SELinux if required
   include_tasks: selinux.yml
   when: selinux_check.rc == 1
+  tags: security
 
 - name: Fix network interfaces
   include_tasks: network.yml
+  tags: network
 
 - name: Setup packages repositories
   include_tasks: repo.yml
+  tags: repo, rhn
 
 - name: Prepare dns
   include_tasks: dns.yml

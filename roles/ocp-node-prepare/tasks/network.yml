@@ -14,11 +14,11 @@
 
 - name: NETWORK | Restart NetworkManager
   service: name=NetworkManager state=restarted
-  when: reconfigure_iface|changed
+  when: reconfigure_iface is changed
   tags: ocp_iface
 
 - setup:
-  when: reconfigure_iface|changed
+  when: reconfigure_iface is changed
   tags: ocp_iface
 
 - meta: flush_handlers

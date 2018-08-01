@@ -1,0 +1,9 @@
+- name: restart nfs server
+  service:
+    name: nfs
+    state: restarted
+
+- name: restart tinyproxy server
+  service:
+    name: tinyproxy
+    state: restarted

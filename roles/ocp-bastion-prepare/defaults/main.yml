@@ -1,0 +1,15 @@
+obp_proxy_install: yes
+obp_proxy_port: 8080
+obp_proxy_allow_net: 0.0.0.0/0
+obp_nfs_install: yes
+obp_nfs_root_folder: /nfs
+obp_nfs_shares:
+- share: /registry
+  network: "*"
+  options: "rw,root_squash"
+- share: /metrics
+  network: "*"
+  options: "rw,root_squash"
+- share: /logging
+  network: "*"
+  options: "rw,root_squash"

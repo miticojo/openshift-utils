@@ -1,0 +1,29 @@
+- name: install epel package
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+
+- name: install tinyproxy
+  yum:
+    name: tinyproxy
+    state: present
+
+- name: copy tinyproxy configuration file
+  template:
+    src: tinyproxy.conf.j2
+    dest: /etc/tinyproxy/tinyproxy.conf
+  notify: restart tinyproxy server
+
+- name: start and enable  tinyproxy server
+  service:
+    name: tinyproxy
+    state: started
+    enabled: yes
+
+- name: check proxy internet
+  uri:
+    url: https://www.google.com
+    status_code: 200
+  environment:
+    http_proxy: http://{{ansible_default_ipv4.address}}:{{obp_proxy_port}}
+    https_proxy: http://{{ansible_default_ipv4.address}}:{{obp_proxy_port}}

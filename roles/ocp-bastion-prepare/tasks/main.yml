@@ -1,0 +1,13 @@
+- name: Check pre-requisites
+  include_tasks: facts.yml
+  tags: always
+
+- name: Install nfs
+  include_tasks: nfs.yml
+  when: obp_nfs_install
+  tags: nfs
+
+- name: Install proxy
+  include_tasks: proxy.yml
+  when: obp_proxy_install
+  tags: proxy

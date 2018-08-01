@@ -1,68 +1,70 @@
-- name: PREPARE | Install pre-requisites packages
-  yum: name={{item}} state=latest
-  with_items: "{{ocp_prereq_packages}}"
-  tags: yum
+- block:
+  - name: PREPARE | Install pre-requisites packages
+    yum: name={{item}} state=latest
+    with_items: "{{ocp_prereq_packages}}"
 
-- name: PREPARE | Set insecure registry for local docker network
-  lineinfile:
-     regexp: "OPTIONS=.*"
-     line: OPTIONS="--selinux-enabled --insecure-registry 172.30.0.0/16"
-     dest: /etc/sysconfig/docker
+  - name: PREPARE | Set insecure registry for local docker network
+    lineinfile:
+       regexp: "OPTIONS=.*"
+       line: OPTIONS="--selinux-enabled --insecure-registry 172.30.0.0/16"
+       dest: /etc/sysconfig/docker
 
-- name: PREPARE | read disk
-  setup:
+  - name: PREPARE | read disk
+    setup:
 
-- name: PREPARE | Get docker disk (disk without partition)
-  set_fact: docker_disk="{{ item.key }}"
-  with_dict: "{{ ansible_devices }}"
-  when:
-  - 'item.key | match("[sv]d[a-z]")'
-  - 'item.value.removable == "0"'
+  - name: PREPARE | Get docker disk (disk without partition)
+    set_fact: docker_disk="{{ item.key }}"
+    with_dict: "{{ ansible_devices }}"
+    when:
+    - 'item.key | match("[sv]d[a-z]")'
+    - 'item.value.removable == "0"'
 
-- name: PREPARE | Verify existence of /dev/docker-vg/docker-pool
-  stat:
-   path: /dev/docker-vg/docker-pool
-  register: docker_vg_status
+  - name: PREPARE | Verify existence of /dev/docker-vg/docker-pool
+    stat:
+     path: /dev/docker-vg/docker-pool
+    register: docker_vg_status
 
 
-- name: PREPARE | Create /etc/sysconfig/docker-storage-setup
-  template:
-    src: etc/sysconfig/docker-storage-setup.j2
-    dest: /etc/sysconfig/docker-storage-setup
-  when: docker_disk is defined
+  - name: PREPARE | Create /etc/sysconfig/docker-storage-setup
+    template:
+      src: etc/sysconfig/docker-storage-setup.j2
+      dest: /etc/sysconfig/docker-storage-setup
+    when: docker_disk is defined
 
-- name: PREPARE | First setup docker storage
-  command: docker-storage-setup
-  when:
-  - docker_disk is defined
-  - docker_vg_status.stat.islnk is not defined
-  ignore_errors: yes
+  - name: PREPARE | First setup docker storage
+    command: docker-storage-setup
+    register: _docker_storage_setup
+    when:
+    - docker_disk is defined
+    - docker_vg_status.stat.islnk is not defined
+    failed_when:
+    - not 'already' in _docker_storage_setup.stderr
+    - _docker_storage_setup.rc != 0
+    check_mode: false
 
-- name: PREPARE | Start docker service
-  service:
-    name: docker
-    state: started
-    enabled: yes
+  - name: PREPARE | Start docker service
+    service:
+      name: docker
+      state: started
+      enabled: yes
+
+  when: inventory_hostname in groups[ocp_node_group]
 
 - name: PREPARE | Install atomic-openshift-utils on masters
   package:
     name: atomic-openshift-utils
     state: latest
-  when: inventory_hostname in groups[ocp_master_group]
 
 - name: PREPARE | Create ansible host inventory file
   template:
     src: etc/ansible/hosts.j2
     dest: /etc/ansible/hosts
-  when: inventory_hostname == groups[ocp_master_group][0]
+  when: inventory_hostname == ocp_bastion_host
 
 - name: PREPARE | Generate copy openshift-ansible-dnsmasq.conf.j2
   copy:
     src: openshift-ansible-dnsmasq.j2
     dest: "{{ocp_node_dnsmasq_additional_config_file}}"
   when:
-  - inventory_hostname in groups[ocp_master_group]
+  - inventory_hostname == ocp_bastion_host
   - ocp_node_dnsmasq_additional_config_file != ''
-
-- name: PREPARE | Enable atomic excluder
-  command: atomic-openshift-excluder enable
