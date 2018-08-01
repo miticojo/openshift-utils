@@ -101,9 +101,35 @@ ocp_vagrant_provider="{{ocp_vagrant_provider}}"
 [nodes]
 {% for host in groups["nodes"] %}
 {{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}
-{%- if not host in groups["masters"] and loop.index == 1 %}
+{%- if not host in groups["masters"] and not "infra" in groups and "node1" in host %}
  openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
- {% else %}
- openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+{%- if ocp_version is version('3.9', '>') %}
+ openshift_node_group_name="node-config-infra"
+{% else %}
+
+{% endif %}
+{% elif not host in groups["masters"] and "infra" in groups %}
+ openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+{%- if ocp_version is version('3.9', '>') %}
+ openshift_node_group_name="node-config-infra"
+{% else %}
+
+{% endif %}
+{% else %}
+{%- if host in groups["masters"] %}
+ openshift_node_labels="{'region': 'master', 'zone': 'default'}"
+{%- if ocp_version is version('3.9', '>') %}
+ openshift_node_group_name="node-config-master"
+{% else %}
+
+{% endif %}
+{% else %}
+ openshift_node_labels="{'region': 'primary', 'zone': 'default'}"
+{%- if ocp_version is version('3.9', '>') %}
+ openshift_node_group_name="node-config-compute"
+{% else %}
+
+{% endif %}
+{% endif %}
 {% endif %}
 {% endfor %}
