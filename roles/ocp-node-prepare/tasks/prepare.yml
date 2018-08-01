@@ -48,13 +48,13 @@
   package:
     name: atomic-openshift-utils
     state: latest
-  when: inventory_hostname in groups[ocp_master_group] and "{{ ocp_version | version_compare('3.9', '<=')}}"
+  when: inventory_hostname in groups[ocp_master_group] and ocp_version is version('3.9', '<=')
 
 - name: PREPARE | Install openshift-ansible on masters
   package:
     name: openshift-ansible
     state: latest
-  when: inventory_hostname in groups[ocp_master_group] and "{{ ocp_version | version_compare('3.9', '>')}}"
+  when: inventory_hostname in groups[ocp_master_group] and ocp_version is version('3.9', '>')
 
 - name: PREPARE | Create ansible host inventory file
   template:
