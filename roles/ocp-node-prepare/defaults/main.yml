@@ -7,13 +7,31 @@ ocp_rhn_pass: "{{ lookup('env','rh_pass') | default('')}}"
 ocp_rhn_pool_ids: "{{ lookup('env','rh_pool') | default('')}}"
 ocp_internal_domain: ''
 ocp_public_domain: ''
-ocp_master_identity_providers: [{
+ocp_master_identity_providers_map:
+ - ocp: '3.7'
+   providers: [{
     'name': 'htpasswd_auth',
     'login': 'true',
     'challenge': 'true',
     'kind': 'HTPasswdPasswordIdentityProvider',
     'filename': '/etc/origin/master/htpasswd'
   }]
+ - ocp: '3.9'
+   providers: [{
+    'name': 'htpasswd_auth',
+    'login': 'true',
+    'challenge': 'true',
+    'kind': 'HTPasswdPasswordIdentityProvider',
+    'filename': '/etc/origin/master/htpasswd'
+  }]
+ - ocp: '3.10'
+   providers: [{
+    'name': 'htpasswd_auth',
+    'login': 'true',
+    'challenge': 'true',
+    'kind': 'HTPasswdPasswordIdentityProvider'
+  }]
+ocp_master_identity_providers: "{{ ocp_master_identity_providers_map | selectattr('ocp', 'equalto', ocp_version) | map(attribute='providers') | list | first }}"
 ocp_master_cluster_method: native
 ocp_master_cluster_hostname: "ocp.{{ocp_internal_domain}}"
 ocp_master_cluster_public_hostname: "ocp.{{ocp_public_domain}}"
