@@ -101,10 +101,6 @@ Vagrant.configure("2") do |config|
         vb.cpus = 2
       end
 
-      if i == 1
-        node.vm.network "forwarded_port", guest: 443, host: 6443
-      end
-
       if i == OCP_NODES_HOSTS
         node.vm.provision :ansible do |ansible|
           ansible.playbook = "vagrant.yml"

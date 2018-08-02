@@ -108,7 +108,7 @@ ocp_vagrant_provider="{{ocp_vagrant_provider}}"
 {% else %}
 
 {% endif %}
-{% elif not host in groups["masters"] and "infra" in groups %}
+{% elif not host in groups["masters"] and "infra" in groups and "node" not in host %}
  openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
 {%- if ocp_version is version('3.9', '>') %}
  openshift_node_group_name="node-config-infra"
