@@ -9,7 +9,7 @@ RHN_USER = ENV['rh_user']
 RHN_PASS = ENV['rh_pass']
 RHN_POOL_ID = ENV['rh_pool']
 PRIVATE_NET = "192.167.33."
-OCP_VERSION = '3.10'
+OCP_VERSION = '3.9'
 OCP_DOCKER_VER = '1.13.1'
 OCP_DOMAIN = 'example.loc'
 OCP_PUBLIC_DOMAIN = 'example.com'
@@ -19,6 +19,7 @@ OCP_METRICS = false
 OCP_SVC_CATALOG = false
 OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
 OCP_CONTAINER_RUNTIME_STORAGE = 'overlay2'
+RHEL_VERSION = '7.5'
 # vagrant plugins to install
 plugins = ["vagrant-sshfs", "vagrant-registration"]
 
@@ -51,7 +52,7 @@ Vagrant.configure("2") do |config|
 
   (1..OCP_MASTER_HOSTS).each do |i|
     config.vm.define "ocp-master#{i}" do |node|
-      node.vm.box = "rhel/7.4"
+      node.vm.box = "rhel/#{RHEL_VERSION}"
       node.vm.hostname = "ocp-master#{i}.#{OCP_DOMAIN}"
       node.vm.network "private_network", ip: "#{PRIVATE_NET}1#{i}"
 
@@ -80,7 +81,7 @@ Vagrant.configure("2") do |config|
 
   (1..OCP_NODES_HOSTS).each do |i|
     config.vm.define "ocp-node#{i}" do |node|
-      node.vm.box = "rhel/7.4"
+      node.vm.box = "rhel/#{RHEL_VERSION}"
       node.vm.hostname = "ocp-node#{i}.#{OCP_DOMAIN}"
       node.vm.network "private_network", ip: "#{PRIVATE_NET}2#{i}"
 
