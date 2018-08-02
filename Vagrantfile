@@ -3,6 +3,8 @@
 
 OCP_MASTER_HOSTS = 1
 OCP_NODES_HOSTS = 2
+OCP_INFRA_HOSTS = 2
+OCP_INFRA = true
 USE_LOCAL_REPO = true
 LOCAL_REPO_URL = "http://#{ENV['local_yum_repo']}:8000"
 RHN_USER = ENV['rh_user']
@@ -17,6 +19,7 @@ OCP_MASTER_SUBDOMAIN = 'apps.example.com'
 OCP_LOGGING = false
 OCP_METRICS = false
 OCP_SVC_CATALOG = false
+OCP_ASB = false
 OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
 OCP_CONTAINER_RUNTIME_STORAGE = 'overlay2'
 RHEL_VERSION = '7.5'
@@ -109,12 +112,22 @@ Vagrant.configure("2") do |config|
         node.vm.provision :ansible do |ansible|
           ansible.playbook = "vagrant.yml"
           ansible.become = true
-          ansible.groups = {
-           "masters" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
-           "etcd" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
-           "nodes" => ["ocp-node[1:#{OCP_NODES_HOSTS}]", "ocp-master[1:#{OCP_MASTER_HOSTS}]"],
-           "OSEv3:children" => ["masters", "nodes"],
-           }
+	  if OCP_INFRA
+            ansible.groups = {
+             "masters" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
+             "etcd" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
+             "nodes" => ["ocp-node[1:#{OCP_NODES_HOSTS}]", "ocp-master[1:#{OCP_MASTER_HOSTS}]", "ocp-infra[1:#{OCP_INFRA_HOSTS}]"],
+	     "infra" => ["ocp-infra[1:#{OCP_INFRA_HOSTS}]"],
+             "OSEv3:children" => ["masters", "nodes"],
+             }
+          else
+            ansible.groups = {
+             "masters" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
+             "etcd" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
+             "nodes" => ["ocp-node[1:#{OCP_NODES_HOSTS}]", "ocp-master[1:#{OCP_MASTER_HOSTS}]"],
+             "OSEv3:children" => ["masters", "nodes"],
+             }
+	   end
            ansible.limit = "ocp-*"
            ansible.become = true
            ansible.extra_vars = {
@@ -140,5 +153,30 @@ Vagrant.configure("2") do |config|
         end
       end
     end
+  end
+  if OCP_INFRA
+      (1..OCP_INFRA_HOSTS).each do |i|
+        config.vm.define "ocp-infra#{i}" do |node|
+          node.vm.box = "rhel/#{RHEL_VERSION}"
+          node.vm.hostname = "ocp-infra#{i}.#{OCP_DOMAIN}"
+          node.vm.network "private_network", ip: "#{PRIVATE_NET}3#{i}"
+    
+          node.vm.provider :vmware_fusion do |vb, override|
+            vb.memory = "2048"
+            vb.cpus = 2
+          end
+    
+          node.vm.provider :virtualbox do |vb, override|
+            vb.linked_clone = true
+            vb.memory = "2048"
+            vb.cpus = 2
+          end
+    
+          node.vm.provider :libvirt do |vb, override|
+            vb.memory = "8192"
+            vb.cpus = 4
+          end
+	end
+      end
   end
 end
