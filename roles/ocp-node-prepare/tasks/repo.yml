@@ -30,7 +30,7 @@
         --enable rhel-{{ ansible_distribution_major_version }}-server-ose-{{ocp_version}}-rpms \
         --enable rhel-{{ ansible_distribution_major_version }}-fast-datapath-rpms 
   
-  - name: REPOS | add ansible repo for ose 3.9
+  - name: REPOS | add ansible repo for ose {{ ocp_version }}
     command: subscription-manager repos --enable=rhel-7-server-ansible-2.4-rpms
     when: ocp_version is version('3.9', '>=')
     
@@ -54,7 +54,7 @@
   when: ocp_local_package_repository
   tags: repos
 
-- name: REPOS | add local repository for 3.9
+- name: REPOS | add local repository for {{ ocp_version }}
   yum_repository:
     name: "{{item}}"
     description: "{{item}} repo"
