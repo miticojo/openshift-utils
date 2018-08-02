@@ -156,19 +156,19 @@ Vagrant.configure("2") do |config|
           node.vm.box = "rhel/#{RHEL_VERSION}"
           node.vm.hostname = "ocp-infra#{i}.#{OCP_DOMAIN}"
           node.vm.network "private_network", ip: "#{PRIVATE_NET}3#{i}"
-    
-          node.vm.provider :vmware_fusion do |vb, override|
+
+	  node.vm.provider :vmware_fusion do |vb, override|
             vb.memory = "2048"
             vb.cpus = 2
           end
-    
-          node.vm.provider :virtualbox do |vb, override|
+
+	  node.vm.provider :virtualbox do |vb, override|
             vb.linked_clone = true
             vb.memory = "2048"
             vb.cpus = 2
           end
-    
-          node.vm.provider :libvirt do |vb, override|
+
+	  node.vm.provider :libvirt do |vb, override|
             vb.memory = "8192"
             vb.cpus = 4
           end
