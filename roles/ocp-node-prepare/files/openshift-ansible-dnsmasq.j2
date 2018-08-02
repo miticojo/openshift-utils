@@ -1,6 +1,6 @@
 {% if ocp_vagrant_provider == 'virtualbox' %}
 listen-address=10.0.2.15
 {% endif %}
-listen-address={{ hostvars[inventory_hostname].openshift_public_ip }}
 listen-address={{ hostvars[inventory_hostname].openshift_ip }}
+listen-address={{ hostvars[inventory_hostname].openshift_public_ip }}
 address=/.{{openshift_master_default_subdomain}}/{{ hostvars[groups["nodes"][0]].openshift_ip }}
