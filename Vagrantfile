@@ -114,7 +114,7 @@ Vagrant.configure("2") do |config|
              "etcd" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
              "nodes" => ["ocp-node[1:#{OCP_NODES_HOSTS}]", "ocp-master[1:#{OCP_MASTER_HOSTS}]", "ocp-infra[1:#{OCP_INFRA_HOSTS}]"],
 	     "infra" => ["ocp-infra[1:#{OCP_INFRA_HOSTS}]"],
-             "OSEv3:children" => ["masters", "nodes"],
+             "OSEv3:children" => ["masters", "nodes", "infra"],
              }
           else
             ansible.groups = {
