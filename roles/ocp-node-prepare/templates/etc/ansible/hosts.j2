@@ -32,8 +32,8 @@ openshift_master_audit_config={"enabled": true, "auditFilePath": "/var/log/rhocp
 
 # Metrics
 {% if ocp_version is version('3.9','<=') %}
-openshift_hosted_metrics_deploy={{ocp_hosted_metrics_deploy}}
-openshift_hosted_logging_deploy={{ocp_hosted_logging_deploy}}
+openshift_metrics_deploy={{ocp_hosted_metrics_deploy}}
+openshift_logging_deploy={{ocp_hosted_logging_deploy}}
 {% endif %}
 openshift_enable_service_catalog={{ocp_enable_service_catalog}}
 
