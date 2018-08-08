@@ -14,8 +14,8 @@ PRIVATE_NET = "192.167.33."
 OCP_VERSION = '3.9'
 OCP_DOCKER_VER = '1.13.1'
 OCP_DOMAIN = 'example.loc'
-OCP_PUBLIC_DOMAIN = 'example.com'
-OCP_MASTER_SUBDOMAIN = 'apps.example.com'
+OCP_PUBLIC_DOMAIN = 'nodisk.space'
+OCP_MASTER_SUBDOMAIN = 'apps.nodisk.space'
 OCP_LOGGING = false
 OCP_METRICS = false
 OCP_SVC_CATALOG = false
@@ -58,6 +58,7 @@ Vagrant.configure("2") do |config|
       node.vm.box = "rhel/#{RHEL_VERSION}"
       node.vm.hostname = "ocp-master#{i}.#{OCP_DOMAIN}"
       node.vm.network "private_network", ip: "#{PRIVATE_NET}1#{i}"
+      node.vm.network "public_network", dev: "br0", type: "bridge"
 
       if i == 1
         node.vm.network "forwarded_port", guest: 8443, host: 8443
@@ -156,6 +157,7 @@ Vagrant.configure("2") do |config|
           node.vm.box = "rhel/#{RHEL_VERSION}"
           node.vm.hostname = "ocp-infra#{i}.#{OCP_DOMAIN}"
           node.vm.network "private_network", ip: "#{PRIVATE_NET}3#{i}"
+          node.vm.network "public_network", dev: "br0", type: "bridge"
 
 	  node.vm.provider :vmware_fusion do |vb, override|
             vb.memory = "2048"

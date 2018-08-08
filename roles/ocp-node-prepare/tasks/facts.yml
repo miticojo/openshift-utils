@@ -30,6 +30,7 @@
   set_fact: ose_internal_iface="{{item}}"
   when:
   - ansible_interfaces > 2
+  - "'ipv4' in hostvars[inventory_hostname]['ansible_' + item]"
   - hostvars[inventory_hostname]['ansible_' + item].type == 'ether'
   - hostvars[inventory_hostname]['ansible_' + item].active == true
   - hostvars[inventory_hostname]['ansible_' + item].ipv4.address != ansible_host
@@ -39,6 +40,7 @@
   set_fact: ose_internal_iface='item'
   when:
   - ose_internal_iface is undefined
+  - "'ipv4' in hostvars[inventory_hostname]['ansible_' + item]"
   - hostvars[inventory_hostname]['ansible_' + item].type == 'ether'
   - hostvars[inventory_hostname]['ansible_' + item].active == true
   - hostvars[inventory_hostname]['ansible_' + item].ipv4.address == ansible_host
