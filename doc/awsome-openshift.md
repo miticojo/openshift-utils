@@ -25,6 +25,7 @@ Manangement
 =======================================================================
 * [Custom Role Creation](http://v1.uncontained.io/playbooks/operationalizing/custom_role_creation.html)
 * [Openshift Roles and Responsibilities](http://v1.uncontained.io/playbooks/fundamentals/openshift_roles_responsibilities.html)
+* [Disable Self-Provisioning](https://docs.openshift.com/container-platform/3.9/admin_guide/managing_projects.html#disabling-self-provisioning)
 
 Networking
 =======================================================================
