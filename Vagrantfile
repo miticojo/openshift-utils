@@ -11,7 +11,7 @@ RHN_USER = ENV['rh_user']
 RHN_PASS = ENV['rh_pass']
 RHN_POOL_ID = ENV['rh_pool']
 PRIVATE_NET = "192.167.33."
-OCP_VERSION = '3.9'
+OCP_VERSION = '3.10'
 OCP_DOCKER_VER = '1.13.1'
 OCP_DOMAIN = 'example.loc'
 OCP_PUBLIC_DOMAIN = 'nodisk.space'
@@ -88,6 +88,7 @@ Vagrant.configure("2") do |config|
           node.vm.box = "rhel/#{RHEL_VERSION}"
           node.vm.hostname = "ocp-infra#{i}.#{OCP_DOMAIN}"
           node.vm.network "private_network", ip: "#{PRIVATE_NET}3#{i}"
+          node.vm.network "public_network", dev: "br0", type: "bridge"
 
           node.vm.provider :vmware_fusion do |vb, override|
             vb.memory = "2048"
