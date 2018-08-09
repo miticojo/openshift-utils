@@ -100,7 +100,7 @@ Vagrant.configure("2") do |config|
           end
 
           node.vm.provider :libvirt do |vb, override|
-            vb.memory = "8192"
+            vb.memory = "2048"
             vb.cpus = 4
           end
         end
