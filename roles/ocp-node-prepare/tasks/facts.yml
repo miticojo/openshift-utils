@@ -1,3 +1,6 @@
+- name: FACTS | Do facts module to get latest information
+  setup:
+
 - name: FACTS | SELinux is required for openshift 3.x
   shell: "test $(getenforce) == 'Enforcing'"
   changed_when: False

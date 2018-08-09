@@ -82,6 +82,31 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  if OCP_INFRA
+      (1..OCP_INFRA_HOSTS).each do |i|
+        config.vm.define "ocp-infra#{i}" do |node|
+          node.vm.box = "rhel/#{RHEL_VERSION}"
+          node.vm.hostname = "ocp-infra#{i}.#{OCP_DOMAIN}"
+          node.vm.network "private_network", ip: "#{PRIVATE_NET}3#{i}"
+
+          node.vm.provider :vmware_fusion do |vb, override|
+            vb.memory = "2048"
+            vb.cpus = 2
+          end
+
+          node.vm.provider :virtualbox do |vb, override|
+            vb.linked_clone = true
+            vb.memory = "2048"
+            vb.cpus = 2
+          end
+
+          node.vm.provider :libvirt do |vb, override|
+            vb.memory = "8192"
+            vb.cpus = 4
+          end
+        end
+      end
+  end
 
   (1..OCP_NODES_HOSTS).each do |i|
     config.vm.define "ocp-node#{i}" do |node|
@@ -150,31 +175,5 @@ Vagrant.configure("2") do |config|
         end
       end
     end
-  end
-  if OCP_INFRA
-      (1..OCP_INFRA_HOSTS).each do |i|
-        config.vm.define "ocp-infra#{i}" do |node|
-          node.vm.box = "rhel/#{RHEL_VERSION}"
-          node.vm.hostname = "ocp-infra#{i}.#{OCP_DOMAIN}"
-          node.vm.network "private_network", ip: "#{PRIVATE_NET}3#{i}"
-          node.vm.network "public_network", dev: "br0", type: "bridge"
-
-	  node.vm.provider :vmware_fusion do |vb, override|
-            vb.memory = "2048"
-            vb.cpus = 2
-          end
-
-	  node.vm.provider :virtualbox do |vb, override|
-            vb.linked_clone = true
-            vb.memory = "2048"
-            vb.cpus = 2
-          end
-
-	  node.vm.provider :libvirt do |vb, override|
-            vb.memory = "8192"
-            vb.cpus = 4
-          end
-	end
-      end
   end
 end
