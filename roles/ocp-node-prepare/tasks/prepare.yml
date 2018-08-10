@@ -63,6 +63,12 @@
     dest: /etc/ansible/hosts
   when: inventory_hostname == groups[ocp_master_group][0]
 
+- name: PREPARE | Copy Customer Certs if enabled
+  copy:
+    src: pki
+    dest: /etc/ansible
+  when: ocp_custom_certs
+
 - name: PREPARE | Generate copy openshift-ansible-dnsmasq.conf.j2
   copy:
     src: openshift-ansible-dnsmasq.j2
