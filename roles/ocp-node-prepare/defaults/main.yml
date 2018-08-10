@@ -83,6 +83,7 @@ ocp_prereq_packages:
 - ansible
 - NetworkManager
 - yum-utils
+- vim
 
 ocp_vagrant_provider: ''
 
