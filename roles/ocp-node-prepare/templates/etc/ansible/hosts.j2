@@ -28,13 +28,24 @@ openshift_master_cluster_method={{ocp_master_cluster_method}}
 openshift_master_cluster_hostname={{ocp_master_cluster_hostname}}
 openshift_master_cluster_public_hostname={{ocp_master_cluster_public_hostname}}
 openshift_master_default_subdomain={{ocp_master_default_subdomain}}
+
+# Audit
 {% if ocp_version is version('3.9', '<=') %}
 openshift_master_audit_config={"enabled": true, "auditFilePath": "/var/log/rhocp-audit.log", "maximumFileRetentionDays": 14, "maximumFileSizeMegabytes": 500, "maximumRetainedFiles": 5}
 {% endif %}
+
 # Metrics
 {% if ocp_version is version('3.9', '<=') %}
 openshift_metrics_deploy={{ocp_hosted_metrics_deploy}}
 openshift_logging_deploy={{ocp_hosted_logging_deploy}}
+{% else %}
+openshift_metrics_install_metrics={{ocp_hosted_metrics_deploy}}
+openshift_metrics_cassandra_nodeselector={"region":"infra"}
+openshift_metrics_hawkular_nodeselector={"region":"infra"}
+openshift_metrics_heapster_nodeselector={"region":"infra"}
+
+# Node Groups
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true','region=master']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true','region=infra']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true','region=primary']}]
 {% endif %}
 openshift_enable_service_catalog={{ocp_enable_service_catalog}}
 
