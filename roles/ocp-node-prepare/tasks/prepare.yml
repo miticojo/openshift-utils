@@ -13,9 +13,10 @@
   setup:
 
 - name: PREPARE | Get docker disk (disk without partition)
-  set_fact: docker_disk="{{ item.key }}"
+  set_fact: docker_disk={{ item.key }}
   with_dict: "{{ ansible_devices }}"
   when:
+  - docker_disk is not defined
   - 'item.key | match("[sv]d[a-z]")'
   - 'item.value.removable == "0"'
 
