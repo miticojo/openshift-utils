@@ -17,7 +17,7 @@ OCP_DOMAIN = 'example.loc'
 OCP_PUBLIC_DOMAIN = 'nodisk.space'
 OCP_MASTER_SUBDOMAIN = 'apps.nodisk.space'
 OCP_LOGGING = false
-OCP_METRICS = false
+OCP_METRICS = true
 OCP_SVC_CATALOG = false
 OCP_ASB = false
 OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
@@ -102,7 +102,7 @@ Vagrant.configure("2") do |config|
           end
 
           node.vm.provider :libvirt do |vb, override|
-            vb.memory = "2048"
+            vb.memory = "8192"
             vb.cpus = 4
           end
         end
@@ -164,7 +164,7 @@ Vagrant.configure("2") do |config|
              "ocp_hosted_metrics_deploy": OCP_METRICS,
              "ocp_hosted_logging_deploy": OCP_LOGGING,
              "ocp_enable_service_catalog": OCP_SVC_CATALOG,
-             "ocp_net_plugin": OCP_NET_PLUGIN,
+             "ocp_network_plugin": OCP_NET_PLUGIN,
              "ocp_docker_ver": OCP_DOCKER_VER,
              "ocp_vagrant_provider": provider,
 	     "ocp_container_runtime_docker_storage_type": OCP_CONTAINER_RUNTIME_STORAGE

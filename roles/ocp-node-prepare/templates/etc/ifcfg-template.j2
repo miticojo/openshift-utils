@@ -4,3 +4,7 @@ HWADDR={{hostvars[inventory_hostname]["ansible_" + item].macaddress}}
 ONBOOT=yes
 TYPE=Ethernet
 USERCTL=no
+{% if ocp_vagrant_provider == "libvirt" or ocp_vagrant_provider == "vmware-fusion" or ocp_vagrant_provider == "virtualbox" %}
+PEERDNS=no
+DEFROUTE=no
+{% endif %}

@@ -1,0 +1,7 @@
+- hosts: masters,infra
+  become: yes
+
+  tasks:
+  - name: run pppoe Configuration
+    import_role:
+      name: pppoe-configuration

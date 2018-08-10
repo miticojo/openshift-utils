@@ -1,0 +1,4 @@
+- name: PACKAGES | Install pppoe packages
+  yum: name={{item}} state=latest
+  with_items: "rp-pppoe"
+  tags: yum

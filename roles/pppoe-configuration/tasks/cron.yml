@@ -1,0 +1,26 @@
+- name: CRON | Cron for master1
+  cron:
+    name: "update_dydns"
+    minute: "*/5"
+    hour: "*"
+    job: "curl https://freedns.afraid.org/dynamic/update.php?cklZTWtvbWdVWlZTSlhzcUQ3ZkNBeDJwOjE3NjkwNjUx"
+  when: inventory_hostname == "ocp-master1"
+  tags: cron
+
+- name: CRON | Cron for infra1
+  cron:
+    name: "update_dydns"
+    minute: "*/5"
+    hour: "*"
+    job: "curl https://freedns.afraid.org/dynamic/update.php?cklZTWtvbWdVWlZTSlhzcUQ3ZkNBeDJwOjE3NjkwNjQ5"
+  when: inventory_hostname == "ocp-infra1"
+  tags: cron
+
+- name: CRON | Cron for infra2
+  cron:
+    name: "update_dydns"
+    minute: "*/5"
+    hour: "*"
+    job: "curl https://freedns.afraid.org/dynamic/update.php?cklZTWtvbWdVWlZTSlhzcUQ3ZkNBeDJwOjE3NjkwNjUw"
+  when: inventory_hostname == "ocp-infra2"
+  tags: cron

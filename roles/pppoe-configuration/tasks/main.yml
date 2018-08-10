@@ -1,0 +1,11 @@
+- name: Install packages
+  include_tasks: packages.yml
+  tags: always
+
+- name: Copy Configuration Files
+  include_tasks: copy.yml
+  tags: copy
+
+- name: Cronjob to refresh dyndns domains
+  include_tasks: cron.yml
+  tags: cron

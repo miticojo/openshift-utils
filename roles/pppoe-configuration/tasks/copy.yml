@@ -1,0 +1,26 @@
+- name: COPY | Copy Configuration Files - chap-secrets
+  copy:
+    src: "chap-secrets"
+    dest: "/etc/ppp/chap-secrets"
+    mode: 600
+    owner: "root"
+    group: "root"
+  tags: copy
+
+- name: COPY | Copy Configuration Files - pap-secrets
+  copy:
+    src: "pap-secrets"
+    dest: "/etc/ppp/pap-secrets"
+    mode: 600
+    owner: "root"
+    group: "root"
+  tags: copy
+
+- name: COPY | Copy Configuration Files - ifcg-ppp0
+  copy:
+    src: "ifcfg-ppp0"
+    dest: "/etc/sysconfig/network-scripts/ifcfg-ppp0"
+    mode: 755
+    owner: "root"
+    group: "root"
+  tags: copy
