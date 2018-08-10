@@ -3,7 +3,7 @@
 
 OCP_MASTER_HOSTS = 1
 OCP_NODES_HOSTS = 2
-OCP_INFRA_HOSTS = 2
+OCP_INFRA_HOSTS = 3
 OCP_INFRA = true
 USE_LOCAL_REPO = true
 LOCAL_REPO_URL = "http://#{ENV['local_yum_repo']}:8000"
@@ -21,9 +21,10 @@ OCP_METRICS = true
 OCP_SVC_CATALOG = false
 OCP_ASB = false
 OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
+OCP_GLUSTERFS = true
 OCP_CONTAINER_RUNTIME_STORAGE = 'overlay2'
 RHEL_VERSION = '7.5'
-PPPOE = true
+PPPOE = false
 # vagrant plugins to install
 plugins = ["vagrant-sshfs", "vagrant-registration"]
 
@@ -110,6 +111,9 @@ Vagrant.configure("2") do |config|
           node.vm.provider :libvirt do |vb, override|
             vb.memory = "8192"
             vb.cpus = 4
+	    if OCP_GLUSTERFS
+	      vb.storage :file, :size => '50G', :type => 'qcow2'
+	    end
           end
         end
       end
@@ -173,7 +177,8 @@ Vagrant.configure("2") do |config|
              "ocp_network_plugin": OCP_NET_PLUGIN,
              "ocp_docker_ver": OCP_DOCKER_VER,
              "ocp_vagrant_provider": provider,
-	     "ocp_container_runtime_docker_storage_type": OCP_CONTAINER_RUNTIME_STORAGE
+	     "ocp_container_runtime_docker_storage_type": OCP_CONTAINER_RUNTIME_STORAGE,
+	     "ocp_glusterfs": OCP_GLUSTERFS
            }
            if USE_LOCAL_REPO
              ansible.extra_vars["ocp_local_package_repository_url"] = LOCAL_REPO_URL
