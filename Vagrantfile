@@ -23,6 +23,7 @@ OCP_ASB = false
 OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
 OCP_GLUSTERFS = true
 OCP_CONTAINER_RUNTIME_STORAGE = 'overlay2'
+OCP_CUSTOM_CERTS = true
 RHEL_VERSION = '7.5'
 PPPOE = false
 # vagrant plugins to install
@@ -178,7 +179,8 @@ Vagrant.configure("2") do |config|
              "ocp_docker_ver": OCP_DOCKER_VER,
              "ocp_vagrant_provider": provider,
 	     "ocp_container_runtime_docker_storage_type": OCP_CONTAINER_RUNTIME_STORAGE,
-	     "ocp_glusterfs": OCP_GLUSTERFS
+	     "ocp_glusterfs": OCP_GLUSTERFS,
+	     "ocp_custom_certs": OCP_CUSTOM_CERTS
            }
            if USE_LOCAL_REPO
              ansible.extra_vars["ocp_local_package_repository_url"] = LOCAL_REPO_URL
