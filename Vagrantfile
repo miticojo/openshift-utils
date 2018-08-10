@@ -162,7 +162,7 @@ Vagrant.configure("2") do |config|
              "ocp_hosted_metrics_deploy": OCP_METRICS,
              "ocp_hosted_logging_deploy": OCP_LOGGING,
              "ocp_enable_service_catalog": OCP_SVC_CATALOG,
-             "ocp_net_plugin": OCP_NET_PLUGIN,
+             "ocp_network_plugin": OCP_NET_PLUGIN,
              "ocp_docker_ver": OCP_DOCKER_VER,
              "ocp_vagrant_provider": provider,
 	     "ocp_container_runtime_docker_storage_type": OCP_CONTAINER_RUNTIME_STORAGE
