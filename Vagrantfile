@@ -3,7 +3,7 @@
 
 OCP_MASTER_HOSTS = 1
 OCP_NODES_HOSTS = 2
-OCP_INFRA_HOSTS = 2
+OCP_INFRA_HOSTS = 3
 OCP_INFRA = false
 USE_LOCAL_REPO = true
 LOCAL_REPO_URL = "http://#{ENV['local_yum_repo']}:8000"
@@ -11,17 +11,19 @@ RHN_USER = ENV['rh_user']
 RHN_PASS = ENV['rh_pass']
 RHN_POOL_ID = ENV['rh_pool']
 PRIVATE_NET = "192.167.33."
-OCP_VERSION = '3.9'
+OCP_VERSION = '3.10'
 OCP_DOCKER_VER = '1.13.1'
 OCP_DOMAIN = 'example.loc'
 OCP_PUBLIC_DOMAIN = 'example.com'
 OCP_MASTER_SUBDOMAIN = 'apps.example.com'
 OCP_LOGGING = false
-OCP_METRICS = false
+OCP_METRICS = true
 OCP_SVC_CATALOG = false
 OCP_ASB = false
 OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
+OCP_GLUSTERFS = true
 OCP_CONTAINER_RUNTIME_STORAGE = 'overlay2'
+OCP_CUSTOM_CERTS = true
 RHEL_VERSION = '7.5'
 # vagrant plugins to install
 plugins = ["vagrant-sshfs", "vagrant-registration"]
@@ -88,7 +90,7 @@ Vagrant.configure("2") do |config|
           node.vm.hostname = "ocp-infra#{i}.#{OCP_DOMAIN}"
           node.vm.network "private_network", ip: "#{PRIVATE_NET}3#{i}"
 
-          node.vm.provider :vmware_fusion do |vb, override|
+	  node.vm.provider :vmware_fusion do |vb, override|
             vb.memory = "2048"
             vb.cpus = 2
           end
@@ -100,8 +102,11 @@ Vagrant.configure("2") do |config|
           end
 
           node.vm.provider :libvirt do |vb, override|
-            vb.memory = "2048"
+            vb.memory = "8192"
             vb.cpus = 4
+	    if OCP_GLUSTERFS
+	      vb.storage :file, :size => '50G', :type => 'qcow2'
+	    end
           end
         end
       end
@@ -165,7 +170,9 @@ Vagrant.configure("2") do |config|
              "ocp_network_plugin": OCP_NET_PLUGIN,
              "ocp_docker_ver": OCP_DOCKER_VER,
              "ocp_vagrant_provider": provider,
-	     "ocp_container_runtime_docker_storage_type": OCP_CONTAINER_RUNTIME_STORAGE
+	     "ocp_container_runtime_docker_storage_type": OCP_CONTAINER_RUNTIME_STORAGE,
+	     "ocp_glusterfs": OCP_GLUSTERFS,
+	     "ocp_custom_certs": OCP_CUSTOM_CERTS
            }
            if USE_LOCAL_REPO
              ansible.extra_vars["ocp_local_package_repository_url"] = LOCAL_REPO_URL

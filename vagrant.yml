@@ -4,7 +4,7 @@
   tasks:
   - name: let vagrant do all its stuff
     pause:
-      minutes: 1
+      minutes: 5
   - name: run Openshift Node Preparation
     import_role:
       name: ocp-node-prepare
