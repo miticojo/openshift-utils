@@ -23,6 +23,7 @@ OCP_ASB = false
 OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
 OCP_CONTAINER_RUNTIME_STORAGE = 'overlay2'
 RHEL_VERSION = '7.5'
+PPPOE = true
 # vagrant plugins to install
 plugins = ["vagrant-sshfs", "vagrant-registration"]
 
@@ -58,7 +59,10 @@ Vagrant.configure("2") do |config|
       node.vm.box = "rhel/#{RHEL_VERSION}"
       node.vm.hostname = "ocp-master#{i}.#{OCP_DOMAIN}"
       node.vm.network "private_network", ip: "#{PRIVATE_NET}1#{i}"
-      node.vm.network "public_network", dev: "br0", type: "bridge"
+      if PPPOE
+        node.vm.network "public_network", dev: "br0", type: "bridge"
+	node.vm.provision "shell", inline: "sleep 5 && ip route del default via 192.168.1.254 dev eth2 && echo -e \"PEERDNS=no\nDEFROUTE=no\n\" >> /etc/sysconfig/network-scripts/ifcfg-eth2 && systemctl restart NetworkManager"
+      end
 
       if i == 1
         node.vm.network "forwarded_port", guest: 8443, host: 8443
@@ -88,8 +92,10 @@ Vagrant.configure("2") do |config|
           node.vm.box = "rhel/#{RHEL_VERSION}"
           node.vm.hostname = "ocp-infra#{i}.#{OCP_DOMAIN}"
           node.vm.network "private_network", ip: "#{PRIVATE_NET}3#{i}"
-          node.vm.network "public_network", dev: "br0", type: "bridge"
-
+	  if PPPOE
+            node.vm.network "public_network", dev: "br0", type: "bridge"
+            node.vm.provision "shell", inline: "sleep 5 && ip route del default via 192.168.1.254 dev eth2 && echo -e \"PEERDNS=no\nDEFROUTE=no\n\" >> /etc/sysconfig/network-scripts/ifcfg-eth2 && systemctl restart NetworkManager"
+	  end
           node.vm.provider :vmware_fusion do |vb, override|
             vb.memory = "2048"
             vb.cpus = 2
