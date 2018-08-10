@@ -4,7 +4,7 @@
 OCP_MASTER_HOSTS = 1
 OCP_NODES_HOSTS = 2
 OCP_INFRA_HOSTS = 2
-OCP_INFRA = true
+OCP_INFRA = false
 USE_LOCAL_REPO = true
 LOCAL_REPO_URL = "http://#{ENV['local_yum_repo']}:8000"
 RHN_USER = ENV['rh_user']
