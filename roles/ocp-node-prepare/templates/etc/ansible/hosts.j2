@@ -69,7 +69,7 @@ openshift_metrics_hawkular_nodeselector={"region":"infra"}
 openshift_metrics_heapster_nodeselector={"region":"infra"}
 
 # Node Groups
-openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true','region=master']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true','region=infra']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true','region=primary']}]
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true','region=master']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true','region=infra']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true','region=primary']}, {'name': 'node-config-compute-infra', 'labels': ['node-role.kubernetes.io/infra=true','region=infra','node-role.kubernetes.io/compute=true','node=compute']} ]
 {% endif %}
 openshift_enable_service_catalog={{ocp_enable_service_catalog}}
 
@@ -86,7 +86,7 @@ openshift_set_node_ip=True
 
 {% if ocp_version is version('3.9', '<=') %}
 # Default Selector
-osm_default_node_selector='region=primary'
+osm_default_node_selector='node=compute'
 openshift_router_selector='region=infra'
 openshift_registry_selector='region=infra'
 {% endif %}
@@ -147,8 +147,12 @@ ocp_vagrant_provider="{{ocp_vagrant_provider}}"
 
 {% if ocp_glusterfs %}
 [glusterfs]
-{% for host in groups["infra"] %}
+{% for host in groups["nodes"] %}
+{% if "infra" in groups and "infra" in host %}
 {{hostvars[host].ansible_hostname}} glusterfs_devices='[ "/dev/vdb" ]'
+{% elif "node" in host and not "infra" in groups %}
+{{hostvars[host].ansible_hostname}} glusterfs_devices='[ "/dev/vdb" ]'
+{% endif %}
 {% endfor %}
 {% endif %}
 
@@ -156,11 +160,11 @@ ocp_vagrant_provider="{{ocp_vagrant_provider}}"
 [nodes]
 {% for host in groups["nodes"] %}
 {{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}
-{%- if not host in groups["masters"] and not "infra" in groups and "node1" in host %}
+{%- if not host in groups["masters"] and not "infra" in groups and "node" in host %}
 {%- if ocp_version is version('3.9', '>') %}
- openshift_node_group_name="node-config-infra"
+ openshift_node_group_name="node-config-compute-infra"
 {% else %}
- openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ openshift_node_labels="{'region': 'infra', 'node': 'compute', 'zone': 'default'}"
 {% endif %}
 {% elif not host in groups["masters"] and "infra" in groups and "node" not in host %}
 {%- if ocp_version is version('3.9', '>') %}
@@ -179,7 +183,7 @@ ocp_vagrant_provider="{{ocp_vagrant_provider}}"
 {%- if ocp_version is version('3.9', '>') %}
  openshift_node_group_name="node-config-compute"
 {% else %}
- openshift_node_labels="{'region': 'primary', 'zone': 'default'}"
+ openshift_node_labels="{'region': 'primary', 'zone': 'default', 'node': 'compute'}"
 {% endif %}
 {% endif %}
 {% endif %}
