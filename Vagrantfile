@@ -23,7 +23,7 @@ OCP_ASB = false
 OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
 OCP_GLUSTERFS = false
 OCP_CONTAINER_RUNTIME_STORAGE = 'overlay2'
-OCP_CUSTOM_CERTS = true
+OCP_CUSTOM_CERTS = false
 RHEL_VERSION = '7.5'
 PPPOE = false
 # vagrant plugins to install
