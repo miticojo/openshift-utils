@@ -36,8 +36,7 @@ plugins.each do |plugin|
   end
 end
 
-if ARGV[1] and \
-   (ARGV[1].split('=')[0] == "--provider" or ARGV[2])
+if ARGV[1] and (ARGV[1].split('=')[0] == "--provider" or ARGV[2])
   provider = (ARGV[1].split('=')[1] || ARGV[2])
 else
   provider = (ENV['VAGRANT_DEFAULT_PROVIDER'] || :virtualbox).to_sym
@@ -45,7 +44,6 @@ end
 
 Vagrant.configure("2") do |config|
   config.vm.synced_folder '.', '/vagrant', disabled: true
-
   if Vagrant.has_plugin?('vagrant-registration')
     if USE_LOCAL_REPO
       config.registration.skip = true
@@ -63,24 +61,20 @@ Vagrant.configure("2") do |config|
       node.vm.network "private_network", ip: "#{PRIVATE_NET}1#{i}"
       if PPPOE
         node.vm.network "public_network", dev: "br0", type: "bridge"
-	node.vm.provision "shell", inline: "sleep 5 && ip route del default via 192.168.1.254 dev eth2 && echo -e \"PEERDNS=no\nDEFROUTE=no\n\" >> /etc/sysconfig/network-scripts/ifcfg-eth2 && systemctl restart NetworkManager"
+	      node.vm.provision "shell", inline: "sleep 5 && ip route del default via 192.168.1.254 dev eth2 && echo -e \"PEERDNS=no\nDEFROUTE=no\n\" >> /etc/sysconfig/network-scripts/ifcfg-eth2 && systemctl restart NetworkManager"
       end
-
       if i == 1
         node.vm.network "forwarded_port", guest: 8443, host: 8443
       end
-
       node.vm.provider :vmware_fusion do |vb, override|
         vb.memory = "2048"
         vb.cpus = 2
       end
-
       node.vm.provider :virtualbox do |vb, override|
         vb.linked_clone = true
         vb.memory = "2048"
         vb.cpus = 2
       end
-
       node.vm.provider :libvirt do |vb, override|
         vb.cpus = 2
         vb.memory = "2048"
@@ -89,35 +83,33 @@ Vagrant.configure("2") do |config|
   end
 
   if OCP_INFRA
-      (1..OCP_INFRA_HOSTS).each do |i|
-        config.vm.define "ocp-infra#{i}" do |node|
-          node.vm.box = "rhel/#{RHEL_VERSION}"
-          node.vm.hostname = "ocp-infra#{i}.#{OCP_DOMAIN}"
-          node.vm.network "private_network", ip: "#{PRIVATE_NET}3#{i}"
-	  if PPPOE
-            node.vm.network "public_network", dev: "br0", type: "bridge"
-            node.vm.provision "shell", inline: "sleep 5 && ip route del default via 192.168.1.254 dev eth2 && echo -e \"PEERDNS=no\nDEFROUTE=no\n\" >> /etc/sysconfig/network-scripts/ifcfg-eth2 && systemctl restart NetworkManager"
-	  end
-          node.vm.provider :vmware_fusion do |vb, override|
-            vb.memory = "2048"
-            vb.cpus = 2
-          end
-
-          node.vm.provider :virtualbox do |vb, override|
-            vb.linked_clone = true
-            vb.memory = "2048"
-            vb.cpus = 2
-          end
-
-          node.vm.provider :libvirt do |vb, override|
-            vb.memory = "8192"
-            vb.cpus = 4
-	    if OCP_GLUSTERFS
-	      vb.storage :file, :size => '50G', :type => 'qcow2'
-	    end
-          end
+    (1..OCP_INFRA_HOSTS).each do |i|
+      config.vm.define "ocp-infra#{i}" do |node|
+        node.vm.box = "rhel/#{RHEL_VERSION}"
+        node.vm.hostname = "ocp-infra#{i}.#{OCP_DOMAIN}"
+        node.vm.network "private_network", ip: "#{PRIVATE_NET}3#{i}"
+	      if PPPOE
+          node.vm.network "public_network", dev: "br0", type: "bridge"
+          node.vm.provision "shell", inline: "sleep 5 && ip route del default via 192.168.1.254 dev eth2 && echo -e \"PEERDNS=no\nDEFROUTE=no\n\" >> /etc/sysconfig/network-scripts/ifcfg-eth2 && systemctl restart NetworkManager"
+	      end
+        node.vm.provider :vmware_fusion do |vb, override|
+          vb.memory = "2048"
+          vb.cpus = 2
+        end
+        node.vm.provider :virtualbox do |vb, override|
+          vb.linked_clone = true
+          vb.memory = "2048"
+          vb.cpus = 2
+        end
+        node.vm.provider :libvirt do |vb, override|
+          vb.memory = "8192"
+          vb.cpus = 4
+	        if OCP_GLUSTERFS
+	          vb.storage :file, :size => '50G', :type => 'qcow2'
+	        end
         end
       end
+    end
   end
 
   (1..OCP_NODES_HOSTS).each do |i|
@@ -125,67 +117,74 @@ Vagrant.configure("2") do |config|
       node.vm.box = "rhel/#{RHEL_VERSION}"
       node.vm.hostname = "ocp-node#{i}.#{OCP_DOMAIN}"
       node.vm.network "private_network", ip: "#{PRIVATE_NET}2#{i}"
-
       node.vm.provider :vmware_fusion do |vb, override|
         vb.memory = "2048"
         vb.cpus = 2
       end
-
       node.vm.provider :virtualbox do |vb, override|
         vb.linked_clone = true
         vb.memory = "2048"
         vb.cpus = 2
       end
-
       node.vm.provider :libvirt do |vb, override|
-        vb.memory = 2048
+	      if not OCP_INFRA
+          vb.memory = 8192
+	      else
+	        vb.memory = 2048
+	      end
         vb.cpus = 2
+	      if OCP_GLUSTERFS and not OCP_INFRA
+	        vb.storage :file, :size => '50G', :type => 'qcow2'
+        end
       end
-
+      if PPPOE and not OCP_INFRA
+        node.vm.network "public_network", dev: "br0", type: "bridge"
+        node.vm.provision "shell", inline: "sleep 5 && ip route del default via 192.168.1.254 dev eth2 && echo -e \"PEERDNS=no\nDEFROUTE=no\n\" >> /etc/sysconfig/network-scripts/ifcfg-eth2 && systemctl restart NetworkManager"
+      end
       if i == OCP_NODES_HOSTS
         node.vm.provision :ansible do |ansible|
           ansible.playbook = "vagrant.yml"
           ansible.become = true
-	  if OCP_INFRA
+	        if OCP_INFRA
             ansible.groups = {
-             "masters" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
-             "etcd" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
-             "nodes" => ["ocp-node[1:#{OCP_NODES_HOSTS}]", "ocp-master[1:#{OCP_MASTER_HOSTS}]", "ocp-infra[1:#{OCP_INFRA_HOSTS}]"],
-	     "infra" => ["ocp-infra[1:#{OCP_INFRA_HOSTS}]"],
-             "OSEv3:children" => ["masters", "nodes", "infra"],
-             }
+              "masters" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
+              "etcd" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
+              "nodes" => ["ocp-node[1:#{OCP_NODES_HOSTS}]", "ocp-master[1:#{OCP_MASTER_HOSTS}]", "ocp-infra[1:#{OCP_INFRA_HOSTS}]"],
+	            "infra" => ["ocp-infra[1:#{OCP_INFRA_HOSTS}]"],
+              "OSEv3:children" => ["masters", "nodes", "infra"],
+            }
           else
             ansible.groups = {
-             "masters" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
-             "etcd" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
-             "nodes" => ["ocp-node[1:#{OCP_NODES_HOSTS}]", "ocp-master[1:#{OCP_MASTER_HOSTS}]"],
-             "OSEv3:children" => ["masters", "nodes"],
-             }
-	   end
-           ansible.limit = "ocp-*"
-           ansible.become = true
-           ansible.extra_vars = {
-             "ocp_rhn_user": RHN_USER,
-             "ocp_rhn_pass": RHN_PASS,
-             "ocp_rhn_pool_ids": RHN_POOL_ID,
-             "ocp_internal_domain": OCP_DOMAIN,
-             "ocp_public_domain": OCP_PUBLIC_DOMAIN,
-             "ocp_master_default_subdomain": OCP_MASTER_SUBDOMAIN,
-             "ocp_version": OCP_VERSION,
-             "ocp_hosted_metrics_deploy": OCP_METRICS,
-             "ocp_hosted_logging_deploy": OCP_LOGGING,
-             "ocp_enable_service_catalog": OCP_SVC_CATALOG,
-             "ocp_network_plugin": OCP_NET_PLUGIN,
-             "ocp_docker_ver": OCP_DOCKER_VER,
-             "ocp_vagrant_provider": provider,
-	     "ocp_container_runtime_docker_storage_type": OCP_CONTAINER_RUNTIME_STORAGE,
-	     "ocp_glusterfs": OCP_GLUSTERFS,
-	     "ocp_custom_certs": OCP_CUSTOM_CERTS
-           }
-           if USE_LOCAL_REPO
-             ansible.extra_vars["ocp_local_package_repository_url"] = LOCAL_REPO_URL
-             ansible.extra_vars["ocp_local_package_repository"] = true
-           end
+              "masters" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
+              "etcd" => ["ocp-master[1:#{OCP_MASTER_HOSTS}]"],
+              "nodes" => ["ocp-node[1:#{OCP_NODES_HOSTS}]", "ocp-master[1:#{OCP_MASTER_HOSTS}]"],
+              "OSEv3:children" => ["masters", "nodes"],
+            }
+	        end
+          ansible.limit = "ocp-*"
+          ansible.become = true
+          ansible.extra_vars = {
+            "ocp_rhn_user": RHN_USER,
+            "ocp_rhn_pass": RHN_PASS,
+            "ocp_rhn_pool_ids": RHN_POOL_ID,
+            "ocp_internal_domain": OCP_DOMAIN,
+            "ocp_public_domain": OCP_PUBLIC_DOMAIN,
+            "ocp_master_default_subdomain": OCP_MASTER_SUBDOMAIN,
+            "ocp_version": OCP_VERSION,
+            "ocp_hosted_metrics_deploy": OCP_METRICS,
+            "ocp_hosted_logging_deploy": OCP_LOGGING,
+            "ocp_enable_service_catalog": OCP_SVC_CATALOG,
+            "ocp_network_plugin": OCP_NET_PLUGIN,
+            "ocp_docker_ver": OCP_DOCKER_VER,
+            "ocp_vagrant_provider": provider,
+	          "ocp_container_runtime_docker_storage_type": OCP_CONTAINER_RUNTIME_STORAGE,
+	          "ocp_glusterfs": OCP_GLUSTERFS,
+	          "ocp_custom_certs": OCP_CUSTOM_CERTS
+          }
+          if USE_LOCAL_REPO
+            ansible.extra_vars["ocp_local_package_repository_url"] = LOCAL_REPO_URL
+            ansible.extra_vars["ocp_local_package_repository"] = true
+          end
         end
       end
     end
