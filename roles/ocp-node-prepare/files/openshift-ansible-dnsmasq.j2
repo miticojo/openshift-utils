@@ -3,4 +3,4 @@ listen-address=10.0.2.15
 {% endif %}
 listen-address={{ hostvars[inventory_hostname].openshift_ip }}
 listen-address={{ hostvars[inventory_hostname].openshift_public_ip }}
-address=/.{{openshift_master_default_subdomain}}/{%- if "infra" in groups %}{{ hostvars[groups["infra"][0]].openshift_ip }}{% else %}{{ hostvars[groups["node"][0]].openshift_ip }}{% endif %}
+address=/.{{openshift_master_default_subdomain}}/{%- if "infra" in groups %}{{ hostvars[groups["infra"][0]].openshift_ip }}{% else %}{{ hostvars[groups["nodes"][0]].openshift_ip }}{% endif %}
