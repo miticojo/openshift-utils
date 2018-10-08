@@ -1,0 +1,44 @@
+### REQUIRE ANSIBLE 2.6
+- hosts: "{{groups.masters.0}}" 
+  
+  tasks:
+  
+  - name: add privileged role to serviceaccount aggregated-logging-elasticsearch
+    command: oc adm policy add-scc-to-user privileged  system:serviceaccount:logging:aggregated-logging-elasticsearch
+
+  - name: change project to logging
+    command: oc project logging
+    
+  - name: get all es dc
+    command: oc get dc -o name -l component=es
+    register: es_dc_out
+    
+  - name: scale down dc for es
+    command: "oc scale {{item}} --replicas=0"
+    with_items: "{{es_dc_out.stdout_lines}}"
+
+
+  - name: apply new securityContext privileged to all dc
+    command: |
+     oc patch {{item}} -p '{"spec":{"template":{"spec":{"containers":[{"name":"elasticsearch","securityContext":{"privileged": true}}]}}}}'
+    with_items: "{{es_dc_out.stdout_lines}}"
+   
+     
+  - name: set NodeSelector for each dc
+    command: |
+      oc patch {{item}} -p '{"spec":{"template":{"spec":{"nodeSelector":{"logging-es-node":"{{my_idx+1}}"}}}}}'
+    loop: "{{es_dc_out.stdout_lines}}"
+    loop_control:
+      index_var: my_idx
+      
+  - name: set hostPath for each rc
+    command: |
+      oc set volume {{item}} --add --overwrite --name=elasticsearch-storage --type=hostPath --path=/logging
+    loop: "{{es_dc_out.stdout_lines}}"
+    loop_control:
+      index_var: my_idx
+
+
+  - name: scale up dc for es
+    command: "oc scale {{item}} --replicas=1"
+    with_items: "{{es_dc_out.stdout_lines}}"

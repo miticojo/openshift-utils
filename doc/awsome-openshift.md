@@ -19,11 +19,13 @@ Installation / Setup
 * [Single Component Installation](https://docs.openshift.com/container-platform/3.9/install_config/install/advanced_install.html#running-the-advanced-installation-individual-components) -  from 3.7 
 * [Health Checks](https://docs.openshift.com/container-platform/3.9/admin_guide/diagnostics_tool.html#ansible-based-tooling-health-checks)
 * [Cluster Capacity](https://docs.openshift.com/container-platform/3.9/admin_guide/cluster_capacity.html)
+* [Certificate Expiration](https://docs.openshift.com/container-platform/3.9/install_config/redeploying_certificates.html#install-config-cert-expiry)
 
 Manangement
 =======================================================================
 * [Custom Role Creation](http://v1.uncontained.io/playbooks/operationalizing/custom_role_creation.html)
 * [Openshift Roles and Responsibilities](http://v1.uncontained.io/playbooks/fundamentals/openshift_roles_responsibilities.html)
+* [Disable Self-Provisioning](https://docs.openshift.com/container-platform/3.9/admin_guide/managing_projects.html#disabling-self-provisioning)
 
 Networking
 =======================================================================
@@ -31,6 +33,9 @@ Networking
 * [Limiting the Bandwidth Available to Pods](https://docs.openshift.com/container-platform/3.9/admin_guide/managing_pods.html#admin-guide-manage-pods-limit-bandwidth) - available from 3.4
 * [Getting Traffic into a Cluster over Non-Standard Ports](https://docs.openshift.com/container-platform/3.9/dev_guide/expose_service/index.html)
 * [Service Discovery on OpenShift Using Multicast](https://blog.openshift.com/service-discovery-openshift-using-multicast)
+* [External Load Balancer integration with Openshift](http://v1.uncontained.io/playbooks/installation/load_balancing.html)
+* [Openshift Balancer with HAProxy](https://github.com/openshift/openshift-ansible/blob/master/roles/openshift_loadbalancer/README.md)
+* [F5 integration with Openshift](https://clouddocs.f5.com/containers/v2/openshift/) - Integration with OpenShift SDN requires a BIG-IP Better or Best license with SDN services.
 
 Reference Architecture Guides
 =======================================================================

@@ -1,0 +1,44 @@
+### REQUIRE ANSIBLE 2.6
+- hosts: "{{groups.masters.0}}" 
+  
+  tasks:
+  
+  - name: add privileged role to serviceaccount cassandra
+    command: oc adm policy add-scc-to-user privileged  system:serviceaccount:openshift-infra:cassandra
+
+  - name: change project to openshift-infra
+    command: oc project openshift-infra
+    
+  - name: get all hawkular-cassandra rc
+    command: oc get rc -o name -l name=hawkular-cassandra
+    register: hawkular_cassandra_rc_out
+    
+  - name: scale down rc for hawkular-cassandra
+    command: "oc scale {{item}} --replicas=0"
+    with_items: "{{hawkular_cassandra_rc_out.stdout_lines}}"
+
+  - name: apply new securityContext privileged to all rc
+    command: |
+     oc patch {{item}} -p '{"spec":{"template":{"spec":{"containers":[{"name":"hawkular-cassandra-{{my_idx+1}}","securityContext":{"privileged": true}}]}}}}'
+    loop: "{{hawkular_cassandra_rc_out.stdout_lines}}"
+    loop_control:
+      index_var: my_idx
+     
+  - name: set NodeSelector for each rc
+    command: |
+      oc patch {{item}} -p '{"spec":{"template":{"spec":{"nodeSelector":{"hawkular-cassandra":"{{my_idx+1}}"}}}}}'
+    loop: "{{hawkular_cassandra_rc_out.stdout_lines}}"
+    loop_control:
+      index_var: my_idx
+
+  - name: set hostPath for each rc
+    command: |
+      oc set volume {{item}} --add --overwrite --name=cassandra-data --type=hostPath --path=/metrics
+    loop: "{{hawkular_cassandra_rc_out.stdout_lines}}"
+    loop_control:
+      index_var: my_idx
+
+
+  - name: scale up rc for hawkular-cassandra
+    command: "oc scale {{item}} --replicas=1"
+    with_items: "{{hawkular_cassandra_rc_out.stdout_lines}}"

@@ -1,31 +1,32 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-OCP_MASTER_HOSTS = 1
+OCP_MASTER_HOSTS = 3
 OCP_NODES_HOSTS = 2
 OCP_INFRA_HOSTS = 3
-OCP_INFRA = false
+OCP_INFRA = true
 USE_LOCAL_REPO = true
 LOCAL_REPO_URL = "http://#{ENV['local_yum_repo']}:8000"
 RHN_USER = ENV['rh_user']
 RHN_PASS = ENV['rh_pass']
 RHN_POOL_ID = ENV['rh_pool']
 PRIVATE_NET = "192.167.33."
-OCP_VERSION = '3.9'
+OCP_VERSION = '3.10'
 OCP_DOCKER_VER = '1.13.1'
 OCP_DOMAIN = 'example.loc'
-OCP_PUBLIC_DOMAIN = 'example.com'
-OCP_MASTER_SUBDOMAIN = 'apps.example.com'
+OCP_PUBLIC_DOMAIN = 'nodisk.space'
+OCP_MASTER_SUBDOMAIN = 'apps.nodisk.space'
 OCP_LOGGING = false
 OCP_METRICS = true
 OCP_SVC_CATALOG = false
 OCP_ASB = false
 OCP_NET_PLUGIN = 'redhat/openshift-ovs-multitenant'
-OCP_GLUSTERFS = false
+OCP_GLUSTERFS = true
 OCP_CONTAINER_RUNTIME_STORAGE = 'overlay2'
-OCP_CUSTOM_CERTS = false
+OCP_CUSTOM_CERTS = true
 RHEL_VERSION = '7.5'
 PPPOE = false
+RHEL_VERSION = '7.5'
 # vagrant plugins to install
 plugins = ["vagrant-sshfs", "vagrant-registration"]
 
@@ -102,7 +103,7 @@ Vagrant.configure("2") do |config|
           vb.cpus = 2
         end
         node.vm.provider :libvirt do |vb, override|
-          vb.memory = "8192"
+          vb.memory = "4096"
           vb.cpus = 4
 	        if OCP_GLUSTERFS
 	          vb.storage :file, :size => '50G', :type => 'qcow2'
@@ -130,7 +131,7 @@ Vagrant.configure("2") do |config|
 	      if not OCP_INFRA
           vb.memory = 8192
 	      else
-	        vb.memory = 2048
+	        vb.memory = 4096
 	      end
         vb.cpus = 2
 	      if OCP_GLUSTERFS and not OCP_INFRA
