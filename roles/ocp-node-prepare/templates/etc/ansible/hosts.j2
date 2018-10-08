@@ -70,10 +70,6 @@ openshift_metrics_heapster_nodeselector={"region":"infra"}
 
 # Node Groups
 openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true','region=master']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true','region=infra']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true','region=primary']}, {'name': 'node-config-compute-infra', 'labels': ['node-role.kubernetes.io/infra=true','region=infra','node-role.kubernetes.io/compute=true','node=compute']} ]
-{% if ocp_version is version('3.9','<=') %}
-openshift_hosted_metrics_deploy={{ocp_hosted_metrics_deploy}}
-openshift_hosted_logging_deploy={{ocp_hosted_logging_deploy}}
->>>>>>> master
 {% endif %}
 openshift_enable_service_catalog={{ocp_enable_service_catalog}}
 
@@ -169,32 +165,12 @@ ocp_vagrant_provider="{{ocp_vagrant_provider}}"
  openshift_node_group_name="node-config-compute-infra"
 {% else %}
  openshift_node_labels="{'region': 'infra', 'node': 'compute', 'zone': 'default'}"
-{%- if not host in groups["masters"] and not "infra" in groups and "node1" in host %}
-{%- if ocp_version is version('3.9', '>') %}
- openshift_node_group_name="node-config-infra"
-{% else %}
- openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
 {% endif %}
 {% elif not host in groups["masters"] and "infra" in groups and "node" not in host %}
 {%- if ocp_version is version('3.9', '>') %}
  openshift_node_group_name="node-config-infra"
 {% else %}
  openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-{% endif %}
-{% else %}
-{%- if host in groups["masters"] %}
-{%- if ocp_version is version('3.9', '>') %}
- openshift_node_group_name="node-config-master"
-{% else %}
- openshift_node_labels="{'region': 'master', 'zone': 'default'}"
-{% endif %}
-{% else %}
-{%- if ocp_version is version('3.9', '>') %}
- openshift_node_group_name="node-config-compute"
-{% else %}
- openshift_node_labels="{'region': 'primary', 'zone': 'default'}"
-{% endif %}
-{% endif %}
 {% endif %}
 {% else %}
 {%- if host in groups["masters"] %}
