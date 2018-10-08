@@ -26,7 +26,6 @@ OCP_CONTAINER_RUNTIME_STORAGE = 'overlay2'
 OCP_CUSTOM_CERTS = true
 RHEL_VERSION = '7.5'
 PPPOE = false
-RHEL_VERSION = '7.5'
 # vagrant plugins to install
 plugins = ["vagrant-sshfs", "vagrant-registration"]
 
