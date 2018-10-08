@@ -13,9 +13,10 @@
   setup:
 
 - name: PREPARE | Get docker disk (disk without partition)
-  set_fact: docker_disk="{{ item.key }}"
+  set_fact: docker_disk={{ item.key }}
   with_dict: "{{ ansible_devices }}"
   when:
+  - docker_disk is not defined
   - 'item.key | match("[sv]d[a-z]")'
   - 'item.value.removable == "0"'
 
@@ -61,6 +62,12 @@
     src: etc/ansible/hosts.j2
     dest: /etc/ansible/hosts
   when: inventory_hostname == groups[ocp_master_group][0]
+
+- name: PREPARE | Copy Customer Certs if enabled
+  copy:
+    src: pki
+    dest: /etc/ansible
+  when: ocp_custom_certs
 
 - name: PREPARE | Generate copy openshift-ansible-dnsmasq.conf.j2
   copy:

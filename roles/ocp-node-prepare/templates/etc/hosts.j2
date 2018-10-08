@@ -10,13 +10,13 @@ ff02::2     ip6-allrouters
 
 # Network nodes as generated through Ansible.
 {% for host in groups["nodes"] %}
-{% if 'ansible_' + ose_internal_iface in hostvars[host] %}
+{% if 'ansible_' + ose_internal_iface in hostvars[host] and 'ipv4' in hostvars[host]['ansible_' + ose_internal_iface] %}
 {{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}  {{ hostvars[host].ansible_hostname }}.{{ocp_internal_domain}} {{ hostvars[host].ansible_hostname }}
 {% endif %}
 {% endfor %}
 
 {% for host in groups["masters"] %}
-{% if 'ansible_' + ose_internal_iface in hostvars[host] %}
+{% if 'ansible_' + ose_internal_iface in hostvars[host] and 'ipv4' in hostvars[host]['ansible_' + ose_internal_iface] %}
 {{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}  {{ocp_master_cluster_hostname}}
 {% endif %}
 {% endfor %}
