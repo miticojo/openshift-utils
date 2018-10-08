@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-OCP_MASTER_HOSTS = 3
+OCP_MASTER_HOSTS = 1
 OCP_NODES_HOSTS = 2
 OCP_INFRA_HOSTS = 3
 OCP_INFRA = true
@@ -103,7 +103,7 @@ Vagrant.configure("2") do |config|
           vb.cpus = 2
         end
         node.vm.provider :libvirt do |vb, override|
-          vb.memory = "4096"
+          vb.memory = "8192"
           vb.cpus = 4
 	        if OCP_GLUSTERFS
 	          vb.storage :file, :size => '50G', :type => 'qcow2'
