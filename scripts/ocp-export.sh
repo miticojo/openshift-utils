@@ -4,10 +4,10 @@ EXPORT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 EXPORT_DIR_WITH_DATE=${EXPORT_DIR}_$(date +%Y%m%d%H%M)
 
 ### Setup
-mkdir -p $EXPORT_DIR_WITH_DATE
+mkdir -p "$EXPORT_DIR_WITH_DATE"
 
 echo -n "Exporting cluster conf"
-mkdir -p $EXPORT_DIR_WITH_DATE/cluster
+mkdir -p "$EXPORT_DIR_WITH_DATE/cluster"
 
 declare -a clsObjs=(
  "clusternetwork" 
@@ -68,7 +68,7 @@ declare -a prjObjs=(
 
 # Export cluster resources 
 for OBJ in "${clsObjs[@]}"; do
-  oc get ${OBJ} -o yaml --export=true > "${EXPORT_DIR_WITH_DATE}/cluster/${OBJ}.yaml" 2>/dev/null
+  oc get "${OBJ}" -o yaml --export=true > "${EXPORT_DIR_WITH_DATE}/cluster/${OBJ}.yaml" 2>/dev/null
   echo -n "."
 done
 echo -n -e "done\n"
@@ -76,9 +76,9 @@ echo -n -e "done\n"
 # Export all resources of every project
 for project in $(oc get projects --no-headers | awk '{print $1}'); do
     echo -n "Exporting up project $project"
-    mkdir -p ${EXPORT_DIR_WITH_DATE}/projects/${project}
+    mkdir -p "${EXPORT_DIR_WITH_DATE}/projects/${project}"
     for OBJ in "${prjObjs[@]}"; do
-      oc get ${OBJ} -n ${project} -o yaml --export=true > "${EXPORT_DIR_WITH_DATE}/projects/${project}/${OBJ}.yaml" 2>/dev/null
+      oc get "${OBJ}" -n "${project}" -o yaml --export=true > "${EXPORT_DIR_WITH_DATE}/projects/${project}/${OBJ}.yaml" 2>/dev/null
       echo -n "."
     done
     echo -n -e "done\n"
