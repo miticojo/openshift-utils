@@ -18,7 +18,7 @@ EXPORT_FILE=ocp_export_$(date +%Y%m%d%H%M)
 ### Setup
 mkdir -p "$EXPORT_DIR_WITH_DATE"
 
-oc version > "${EXPORT_DIR_WITH_DATE}/cluster/version.txt" 2>/dev/null
+oc version > "${EXPORT_DIR_WITH_DATE}/version.txt" 2>/dev/null
 
 echo -n "Exporting cluster conf"
 mkdir -p "$EXPORT_DIR_WITH_DATE/cluster"
