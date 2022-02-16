@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+set -e
+
+command_exists() {
+  command -v "$@" > /dev/null 2>&1
+}
+
+if ! command_exists oc; then
+   echo "Error: Unable to find \"oc\" binary in this system."
+   exit 1
+fi
+
 
 EXPORT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 EXPORT_DIR_WITH_DATE=${EXPORT_DIR}/ocp_export_$(date +%Y%m%d%H%M)
@@ -6,28 +17,30 @@ EXPORT_DIR_WITH_DATE=${EXPORT_DIR}/ocp_export_$(date +%Y%m%d%H%M)
 ### Setup
 mkdir -p "$EXPORT_DIR_WITH_DATE"
 
+oc version > "${EXPORT_DIR_WITH_DATE}/cluster/version.txt" 2>/dev/null
+
 echo -n "Exporting cluster conf"
 mkdir -p "$EXPORT_DIR_WITH_DATE/cluster"
 
 declare -a clsObjs=(
- "clusternetwork" 
- "clusterpolicy" 
- "clusterpolicybinding" 
- "clusterresourcequota" 
- "clusterrole" 
- "clusterrolebinding" 
- "egressnetworkpolicy" 
- "group" 
- "hostsubnet" 
- "identity" 
- "netnamespace" 
- "networkpolicy" 
- "node" 
- "persistentvolumes" 
- "securitycontextconstraints" 
- "thirdpartyresource" 
- "thirdpartyresourcedata" 
- "user" 
+ "clusternetwork"
+ "clusterpolicy"
+ "clusterpolicybinding"
+ "clusterresourcequota"
+ "clusterrole"
+ "clusterrolebinding"
+ "egressnetworkpolicy"
+ "group"
+ "hostsubnet"
+ "identity"
+ "netnamespace"
+ "networkpolicy"
+ "node"
+ "persistentvolumes"
+ "securitycontextconstraints"
+ "thirdpartyresource"
+ "thirdpartyresourcedata"
+ "user"
  "useridentitymapping"
  "storageclasses"
  "podpreset"
@@ -36,37 +49,37 @@ declare -a clsObjs=(
 declare -a prjObjs=(
  "namespace"
  "project"
- "pods" 
- "replicationcontrollers" 
- "deploymentconfigs" 
- "buildconfigs" 
- "services" 
- "routes" 
- "pvc" 
- "quota" 
- "hpa" 
- "configmaps" 
- "daemonsets" 
- "deployments" 
- "endpoints" 
- "imagestreams" 
- "ingress" 
- "scheduledjobs" 
- "jobs" 
- "limitranges" 
- "policies" 
- "policybindings" 
- "roles" 
- "rolebindings" 
- "resourcequotas" 
- "replicasets" 
- "serviceaccounts" 
- "templates" 
- "oauthclients" 
+ "pods"
+ "replicationcontrollers"
+ "deploymentconfigs"
+ "buildconfigs"
+ "services"
+ "routes"
+ "pvc"
+ "quota"
+ "hpa"
+ "configmaps"
+ "daemonsets"
+ "deployments"
+ "endpoints"
+ "imagestreams"
+ "ingress"
+ "scheduledjobs"
+ "jobs"
+ "limitranges"
+ "policies"
+ "policybindings"
+ "roles"
+ "rolebindings"
+ "resourcequotas"
+ "replicasets"
+ "serviceaccounts"
+ "templates"
+ "oauthclients"
  "statefulset"
 )
 
-# Export cluster resources 
+# Export cluster resources
 for OBJ in "${clsObjs[@]}"; do
   oc get "${OBJ}" -o yaml --export=true > "${EXPORT_DIR_WITH_DATE}/cluster/${OBJ}.yaml" 2>/dev/null
   echo -n "."
