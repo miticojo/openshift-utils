@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 EXPORT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-EXPORT_DIR_WITH_DATE=${EXPORT_DIR}_$(date +%Y%m%d%H%M)
+EXPORT_DIR_WITH_DATE=${EXPORT_DIR}/ocp_export_$(date +%Y%m%d%H%M)
 
 ### Setup
 mkdir -p "$EXPORT_DIR_WITH_DATE"
