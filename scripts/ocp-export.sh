@@ -13,6 +13,7 @@ fi
 
 EXPORT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 EXPORT_DIR_WITH_DATE=${EXPORT_DIR}/ocp_export_$(date +%Y%m%d%H%M)
+EXPORT_FILE=ocp_export_$(date +%Y%m%d%H%M)
 
 ### Setup
 mkdir -p "$EXPORT_DIR_WITH_DATE"
@@ -96,6 +97,11 @@ for project in $(oc get projects --no-headers | awk '{print $1}'); do
     done
     echo -n -e "done\n"
 done
+
+if command_exists tar; then
+  tar -czf "${EXPORT_DIR}/${EXPORT_FILE}.tar.gz" "${EXPORT_DIR_WITH_DATE}"
+  echo "Export file ${EXPORT_DIR}/${EXPORT_FILE}.tar.gz ready"
+fi
 
 echo "Export completed"
 exit 0
