@@ -83,8 +83,11 @@ ocp_prereq_packages:
 - ansible
 - NetworkManager
 - yum-utils
+- vim
 
 ocp_vagrant_provider: ''
 
 ocp_default_users:
 - admin
+
+docker_disk: 'vda'

@@ -5,12 +5,27 @@
 masters
 nodes
 etcd
+{% if "lb" in groups %}
 lb
+{% endif %}
+{% if ocp_glusterfs %}
+glusterfs
+{% endif %}
+{% if "infra" in groups %}
+infra
+{% endif %}
 
 # Set variables common for all OSEv3 hosts
 [OSEv3:vars]
 ansible_ssh_user=root
 deployment_type=openshift-enterprise
+
+{% if ocp_custom_certs %}
+# Custom Certs
+openshift_master_overwrite_named_certificates=true
+openshift_master_named_certificates=[{"certfile": "{{ '{{ inventory_dir }}'}}/pki/server.cer", "keyfile": "{{ '{{ inventory_dir }}' }}/pki/server.key", "names": ["{{ocp_master_cluster_public_hostname}}"], "cafile": "{{ '{{ inventory_dir }}' }}/pki/ca.cer"}]
+openshift_hosted_router_certificate={"certfile": "{{ '{{ inventory_dir }}' }}/pki/server.cer", "keyfile": "{{ '{{ inventory_dir }}' }}/pki/server.key", "cafile": "{{ '{{ inventory_dir }}' }}/pki/ca.cer"}
+{% endif %}
 
 # check disabled for lab purpose (NON PRODUCTION)
 openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability,package_version
@@ -28,12 +43,33 @@ openshift_master_cluster_method={{ocp_master_cluster_method}}
 openshift_master_cluster_hostname={{ocp_master_cluster_hostname}}
 openshift_master_cluster_public_hostname={{ocp_master_cluster_public_hostname}}
 openshift_master_default_subdomain={{ocp_master_default_subdomain}}
+
+{% if ocp_glusterfs %}
+# GlusterFs
+openshift_hosted_registry_storage_kind=glusterfs
+openshift_hosted_registry_replicas=1
+openshift_storage_glusterfs_namespace=app-storage
+openshift_storage_glusterfs_storageclass=true
+openshift_storage_glusterfs_storageclass_default=false
+{% endif %}
+
+{% if ocp_version is version('3.9', '<=') %}
+# Audit
 openshift_master_audit_config={"enabled": true, "auditFilePath": "/var/log/rhocp-audit.log", "maximumFileRetentionDays": 14, "maximumFileSizeMegabytes": 500, "maximumRetainedFiles": 5}
+{% endif %}
 
 # Metrics
-{% if ocp_version is version('3.9','<=') %}
-openshift_hosted_metrics_deploy={{ocp_hosted_metrics_deploy}}
-openshift_hosted_logging_deploy={{ocp_hosted_logging_deploy}}
+{% if ocp_version is version('3.9', '<=') %}
+openshift_metrics_deploy={{ocp_hosted_metrics_deploy}}
+openshift_logging_deploy={{ocp_hosted_logging_deploy}}
+{% else %}
+openshift_metrics_install_metrics={{ocp_hosted_metrics_deploy}}
+openshift_metrics_cassandra_nodeselector={"region":"infra"}
+openshift_metrics_hawkular_nodeselector={"region":"infra"}
+openshift_metrics_heapster_nodeselector={"region":"infra"}
+
+# Node Groups
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true','region=master']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true','region=infra']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true','region=primary']}, {'name': 'node-config-compute-infra', 'labels': ['node-role.kubernetes.io/infra=true','region=infra','node-role.kubernetes.io/compute=true','node=compute']} ]
 {% endif %}
 openshift_enable_service_catalog={{ocp_enable_service_catalog}}
 
@@ -48,10 +84,12 @@ openshift_portal_net=172.30.0.0/16
 #openshift_master_console_port=8443
 openshift_set_node_ip=True
 
+{% if ocp_version is version('3.9', '<=') %}
 # Default Selector
-osm_default_node_selector='region=primary'
+osm_default_node_selector='node=compute'
 openshift_router_selector='region=infra'
 openshift_registry_selector='region=infra'
+{% endif %}
 
 openshift_clock_enabled=true
 
@@ -93,11 +131,28 @@ ocp_vagrant_provider="{{ocp_vagrant_provider}}"
 {{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}
 {% endfor %}
 
-# Specify load balancer host
-[lb]
 {% if "lb" in groups %}
+[lb]
 {% for host in groups["lb"] %}
 {{hostvars[host].ansible_hostname}}
+{% endfor %}
+{% endif %}
+
+{% if "infra" in groups %}
+[infra]
+{% for host in groups["infra"] %}
+{{hostvars[host].ansible_hostname}}
+{% endfor %}
+{% endif %}
+
+{% if ocp_glusterfs %}
+[glusterfs]
+{% for host in groups["nodes"] %}
+{% if "infra" in groups and "infra" in host %}
+{{hostvars[host].ansible_hostname}} glusterfs_devices='[ "/dev/vdb" ]'
+{% elif "node" in host and not "infra" in groups %}
+{{hostvars[host].ansible_hostname}} glusterfs_devices='[ "/dev/vdb" ]'
+{% endif %}
 {% endfor %}
 {% endif %}
 
@@ -105,11 +160,11 @@ ocp_vagrant_provider="{{ocp_vagrant_provider}}"
 [nodes]
 {% for host in groups["nodes"] %}
 {{hostvars[host].ansible_hostname}} openshift_public_ip={{ hostvars[host]['ansible_default_ipv4']['address'] }} openshift_ip={{ hostvars[host]['ansible_' + ose_internal_iface]['ipv4']['address'] }}
-{%- if not host in groups["masters"] and not "infra" in groups and "node1" in host %}
+{%- if not host in groups["masters"] and not "infra" in groups and "node" in host %}
 {%- if ocp_version is version('3.9', '>') %}
- openshift_node_group_name="node-config-infra"
+ openshift_node_group_name="node-config-compute-infra"
 {% else %}
- openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ openshift_node_labels="{'region': 'infra', 'node': 'compute', 'zone': 'default'}"
 {% endif %}
 {% elif not host in groups["masters"] and "infra" in groups and "node" not in host %}
 {%- if ocp_version is version('3.9', '>') %}
@@ -128,7 +183,7 @@ ocp_vagrant_provider="{{ocp_vagrant_provider}}"
 {%- if ocp_version is version('3.9', '>') %}
  openshift_node_group_name="node-config-compute"
 {% else %}
- openshift_node_labels="{'region': 'primary', 'zone': 'default'}"
+ openshift_node_labels="{'region': 'primary', 'zone': 'default', 'node': 'compute'}"
 {% endif %}
 {% endif %}
 {% endif %}
